@@ -72,7 +72,7 @@ if (cluster.isMaster) {
   console.log(chalk.gray(`Successfully forked ${numCPUs} workers.`));
   console.log("")
   console.log(`|-| [- |_ | /\\ ( ~|~ \`/ |_`);
-  console.log(`Shadowless v1.0.1`);
+  console.log(`Shadowless v1.1`);
   console.log(`Application started at port: ${settings.website.port}`)
 
   cluster.on('exit', (worker, code, signal) => {
