@@ -99,30 +99,62 @@
             </div>
 
             <!-- Resource Limits Information Section -->
-            <div class="resource-info-bar mb-8 animate-fade-in shadow-lg">
-                <div class="flex items-center space-x-3 mb-4">
-                    <div class="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center">
-                        <i class="fas fa-info-circle text-indigo-500"></i>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <!-- Maximum Resource Limits -->
+                <div class="resource-info-bar animate-fade-in shadow-lg bg-gray-900/50 border border-indigo-500/20 rounded-xl p-6">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center">
+                            <i class="fas fa-arrow-up text-indigo-500"></i>
+                        </div>
+                        <h2 class="text-xl font-bold gradient-text">Maximum Available Resources</h2>
                     </div>
-                    <h2 class="text-xl font-bold gradient-text">Maximum Available Resources</h2>
+                    <p class="text-gray-300 mb-4">You can allocate resources up to these maximum values:</p>
+                    <div class="flex flex-wrap gap-2">
+                        <div class="resource-info-badge">
+                            <i class="fas fa-memory text-indigo-400"></i>
+                            <span>Max RAM: 8192 MB</span>
+                        </div>
+                        <div class="resource-info-badge">
+                            <i class="fas fa-microchip text-blue-400"></i>
+                            <span>Max CPU: 500%</span>
+                        </div>
+                        <div class="resource-info-badge">
+                            <i class="fas fa-hdd text-amber-400"></i>
+                            <span>Max Disk: 20480 MB</span>
+                        </div>
+                        <div class="resource-info-badge">
+                            <i class="fas fa-server text-green-400"></i>
+                            <span>Max Servers: 2</span>
+                        </div>
+                    </div>
                 </div>
-                <p class="text-gray-300 mb-4">You can edit your server resources up to these maximum values:</p>
-                <div class="flex flex-wrap gap-2">
-                    <div class="resource-info-badge">
-                        <i class="fas fa-memory"></i>
-                        <span>Max RAM: 8192 MB</span>
+
+                <!-- Minimum Resource Limits -->
+                <div class="resource-info-bar animate-fade-in shadow-lg bg-gray-900/50 border border-indigo-500/20 rounded-xl p-6">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center">
+                            <i class="fas fa-arrow-down text-indigo-500"></i>
+                        </div>
+                        <h2 class="text-xl font-bold gradient-text">Minimum Required Resources</h2>
                     </div>
-                    <div class="resource-info-badge">
-                        <i class="fas fa-microchip"></i>
-                        <span>Max CPU: 500%</span>
-                    </div>
-                    <div class="resource-info-badge">
-                        <i class="fas fa-hdd"></i>
-                        <span>Max Disk: 20480 MB</span>
-                    </div>
-                    <div class="resource-info-badge">
-                        <i class="fas fa-server"></i>
-                        <span>Max Servers: 3</span>
+                    <p class="text-gray-300 mb-4">Your server must have at least these resources to function properly:</p>
+                    <div class="flex flex-wrap gap-2">
+                        <div class="resource-info-badge">
+                            <i class="fas fa-memory text-indigo-400"></i>
+                            <span>Min RAM: 1024 MB</span>
+                        </div>
+                        <div class="resource-info-badge">
+                            <i class="fas fa-microchip text-blue-400"></i>
+                            <span>Min CPU: 100%</span>
+                        </div>
+                        <div class="resource-info-badge">
+                            <i class="fas fa-hdd text-amber-400"></i>
+                            <span>Min Disk: 1024 MB</span>
+                        </div>
+                        <div class="resource-info-badge">
+                            <i class="fas fa-users text-purple-400"></i>
+                            <span>Max Players: 5</span>
+                        </div>
                     </div>
                 </div>
             </div>

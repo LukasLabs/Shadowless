@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - <%= settings.name %></title>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title><%= settings.name %> - Admin Dashboard</title>
     <link rel="icon" type="image/png" href="https://i.imgur.com/GY3cXet.png">
-  <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
     <style>
         @keyframes fadeIn {
@@ -15,170 +15,461 @@
         .animate-fade-in {
             animation: fadeIn 0.3s ease-out forwards;
         }
+        .shadow-glow {
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+        }
+        .gradient-text {
+            background: linear-gradient(45deg, #6366f1, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .bg-grid {
+            background-image: radial-gradient(rgba(99, 102, 241, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .card-hover:hover {
+            transform: translateY(-3px);
+        }
+        .stat-card-pulse::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            background: linear-gradient(45deg, #6366f1, #8b5cf6, #d946ef);
+            border-radius: inherit;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .stat-card-pulse:hover::before {
+            opacity: 0.3;
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 0.2;
+            }
+            50% {
+                opacity: 0.4;
+            }
+        }
     </style>
 </head>
-<body class="bg-[#0F0F0F] text-white min-h-screen">
-  <div class="flex">
-        <!-- Admin Sidebar -->
+<body class="bg-black text-white min-h-screen">
+    <div class="flex">
+        <!-- Sidebar -->
         <%- include('../partials/admin-nav') %>
         
-      <!-- Main Content -->
+        <!-- Main Content -->
         <main class="flex-1 ml-72 p-8">
-            <!-- Header -->
-            <div class="flex items-center justify-between mb-8">
-                <div>
-                    <h1 class="text-3xl font-bold">Admin Panel</h1>
-                    <p class="text-gray-400">Manage your server and users</p>
+            <!-- Welcome Section -->
+            <div class="relative rounded-2xl overflow-hidden mb-8 animate-fade-in shadow-glow">
+                <div class="absolute inset-0 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 backdrop-blur-sm bg-grid"></div>
+                <div class="relative p-8">
+                    <h1 class="text-4xl font-bold mb-2 gradient-text">Admin Dashboard</h1>
+                    <p class="text-gray-300">Welcome back, <%= req.session.userinfo.username %>! Manage your platform from this admin control center.</p>
                 </div>
-                <div class="flex items-center space-x-4">
-                      <div class="relative">
+            </div>
+
+            <!-- Stats Overview -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <!-- Users Card -->
+                <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl p-6 hover:bg-gray-900/90 transition-all duration-300 animate-fade-in card-hover shadow-lg relative stat-card-pulse overflow-hidden">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
+                                <i class="fas fa-users text-blue-500"></i>
+                            </div>
+                            <span class="text-gray-300">Total Users</span>
+                        </div>
+                        <span class="text-2xl font-bold gradient-text user-count">0</span>
+                    </div>
+                    <div class="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
+                        <div class="h-full bg-blue-500 user-progress transition-all duration-1000" style="width: 0%"></div>
+                    </div>
+                    <div class="flex justify-between mt-3">
+                        <span class="text-xs text-gray-400">
+                            <i class="fas fa-arrow-up text-green-400 mr-1"></i> 12% this month
+                        </span>
+                        <a href="/admin/users" class="text-xs text-indigo-400 hover:text-indigo-300 transition-all">
+                            View All <i class="fas fa-chevron-right ml-1 text-xs"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Servers Card -->
+                <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl p-6 hover:bg-gray-900/90 transition-all duration-300 animate-fade-in card-hover shadow-lg relative stat-card-pulse overflow-hidden">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
+                                <i class="fas fa-server text-purple-500"></i>
+                            </div>
+                            <span class="text-gray-300">Active Servers</span>
+                        </div>
+                        <span class="text-2xl font-bold gradient-text server-count">0</span>
+                    </div>
+                    <div class="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
+                        <div class="h-full bg-purple-500 server-progress transition-all duration-1000" style="width: 0%"></div>
+                    </div>
+                    <div class="flex justify-between mt-3">
+                        <span class="text-xs text-gray-400">
+                            <i class="fas fa-arrow-up text-green-400 mr-1"></i> 8% this week
+                        </span>
+                        <a href="/admin/servers" class="text-xs text-indigo-400 hover:text-indigo-300 transition-all">
+                            View All <i class="fas fa-chevron-right ml-1 text-xs"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Revenue Card -->
+                <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl p-6 hover:bg-gray-900/90 transition-all duration-300 animate-fade-in card-hover shadow-lg relative stat-card-pulse overflow-hidden">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center">
+                                <i class="fas fa-dollar-sign text-green-500"></i>
+                            </div>
+                            <span class="text-gray-300">Total Revenue</span>
+                        </div>
+                        <span class="text-2xl font-bold gradient-text revenue-value">$0</span>
+                    </div>
+                    <div class="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
+                        <div class="h-full bg-green-500 revenue-progress transition-all duration-1000" style="width: 0%"></div>
+                    </div>
+                    <div class="flex justify-between mt-3">
+                        <span class="text-xs text-gray-400">
+                            <i class="fas fa-arrow-up text-green-400 mr-1"></i> 15% this month
+                        </span>
+                        <a href="/admin/finance" class="text-xs text-indigo-400 hover:text-indigo-300 transition-all">
+                            View Report <i class="fas fa-chevron-right ml-1 text-xs"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Tickets Card -->
+                <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl p-6 hover:bg-gray-900/90 transition-all duration-300 animate-fade-in card-hover shadow-lg relative stat-card-pulse overflow-hidden">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center">
+                                <i class="fas fa-ticket-alt text-amber-500"></i>
+                            </div>
+                            <span class="text-gray-300">Support Tickets</span>
+                        </div>
+                        <span class="text-2xl font-bold gradient-text ticket-count">0</span>
+                    </div>
+                    <div class="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
+                        <div class="h-full bg-amber-500 ticket-progress transition-all duration-1000" style="width: 0%"></div>
+                    </div>
+                    <div class="flex justify-between mt-3">
+                        <span class="text-xs text-gray-400">
+                            <i class="fas fa-arrow-down text-green-400 mr-1"></i> 3% this week
+                        </span>
+                        <a href="/admin/tickets" class="text-xs text-indigo-400 hover:text-indigo-300 transition-all">
+                            View All <i class="fas fa-chevron-right ml-1 text-xs"></i>
+                        </a>
                     </div>
                 </div>
             </div>
 
-            <!-- Stats Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                <div class="bg-[#1A1A1A] rounded-xl p-6 hover:bg-[#242424] transition-all duration-300 animate-fade-in">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-gray-400">Total Users</p>
-                            <h3 class="text-2xl font-bold">Loading...</h3>
-                        </div>
-                        <div class="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center">
-                            <i class="fas fa-users text-blue-500 text-xl"></i>
-                        </div>
-                      </div>
-                    <div class="mt-4">
-                        <div class="flex items-center text-green-500 text-sm">
-                            <i class="fas fa-arrow-up mr-1"></i>
-                            <span>Loading...</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="bg-[#1A1A1A] rounded-xl p-6 hover:bg-[#242424] transition-all duration-300 animate-fade-in">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-gray-400">Active Servers</p>
-                            <h3 class="text-2xl font-bold">Loading...</h3>
-                      </div>
-                        <div class="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center">
-                            <i class="fas fa-server text-purple-500 text-xl"></i>
-                        </div>
-                    </div>
-                    <div class="mt-4">
-                        <div class="flex items-center text-green-500 text-sm">
-                            <i class="fas fa-arrow-up mr-1"></i>
-                            <span>Loading...</span>
-                      </div>
-                    </div>
-                  </div>
-
-                <div class="bg-[#1A1A1A] rounded-xl p-6 hover:bg-[#242424] transition-all duration-300 animate-fade-in">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-gray-400">Total Revenue</p>
-                            <h3 class="text-2xl font-bold">Loading...</h3>
-                        </div>
-                        <div class="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center">
-                            <i class="fas fa-dollar-sign text-green-500 text-xl"></i>
-                        </div>
-                    </div>
-                    <div class="mt-4">
-                        <div class="flex items-center text-green-500 text-sm">
-                            <i class="fas fa-arrow-up mr-1"></i>
-                            <span>Loading...</span>
-                        </div>
-                    </div>
-                  </div>
-                
-                <div class="bg-[#1A1A1A] rounded-xl p-6 hover:bg-[#242424] transition-all duration-300 animate-fade-in">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-gray-400">Support Tickets</p>
-                            <h3 class="text-2xl font-bold">Loading...</h3>
-                        </div>
-                        <div class="w-12 h-12 rounded-xl bg-yellow-500/10 flex items-center justify-center">
-                            <i class="fas fa-ticket-alt text-yellow-500 text-xl"></i>
-                        </div>
-                    </div>
-                    <div class="mt-4">
-                        <div class="flex items-center text-red-500 text-sm">
-                            <i class="fas fa-arrow-up mr-1"></i>
-                            <span>Loading...</span>
-                        </div>
-                    </div>
-          </div>
-        </div>
-        
-            
-
-            <!-- Quick Actions -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="bg-[#1A1A1A] rounded-xl p-6 animate-fade-in">
-                    <h2 class="text-xl font-semibold mb-6">Quick Actions</h2>
+            <!-- Admin Actions + System Status -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Quick Actions -->
+                <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl p-6 animate-fade-in shadow-lg">
+                    <h2 class="text-xl font-bold mb-6 gradient-text">Administrative Actions</h2>
                     <div class="grid grid-cols-2 gap-4">
-                        <a href="/admin/users" class="p-4 rounded-lg bg-[#242424] hover:bg-[#2A2A2A] transition-all duration-300 text-left">
-                            <i class="fas fa-user-plus text-blue-500 mb-2"></i>
-                            <p class="font-medium">Add User</p>
-                            <p class="text-sm text-gray-400">Create new user account</p>
+                        <a href="/admin/users/new" class="relative group overflow-hidden">
+                            <div class="p-5 rounded-xl bg-gray-800/80 border border-indigo-500/20 hover:border-indigo-500/40 transition-all duration-300 flex flex-col items-center text-center group-hover:bg-indigo-900/20">
+                                <div class="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center mb-3">
+                                    <i class="fas fa-user-plus text-indigo-500 text-xl"></i>
+                                </div>
+                                <h3 class="font-medium mb-1">Create User</h3>
+                                <p class="text-xs text-gray-400">Add new user account</p>
+                                <div class="absolute inset-0 bg-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl"></div>
+                            </div>
                         </a>
-                        <a href="/admin/servers" class="p-4 rounded-lg bg-[#242424] hover:bg-[#2A2A2A] transition-all duration-300 text-left">
-                            <i class="fas fa-server text-purple-500 mb-2"></i>
-                            <p class="font-medium">Manage Servers</p>
-                            <p class="text-sm text-gray-400">View all servers</p>
+                        <a href="/admin/servers/manage" class="relative group overflow-hidden">
+                            <div class="p-5 rounded-xl bg-gray-800/80 border border-indigo-500/20 hover:border-indigo-500/40 transition-all duration-300 flex flex-col items-center text-center group-hover:bg-purple-900/20">
+                                <div class="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center mb-3">
+                                    <i class="fas fa-server text-purple-500 text-xl"></i>
+                                </div>
+                                <h3 class="font-medium mb-1">Manage Servers</h3>
+                                <p class="text-xs text-gray-400">View & control servers</p>
+                                <div class="absolute inset-0 bg-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl"></div>
+                            </div>
                         </a>
-                        <a href="/admin/settings" class="p-4 rounded-lg bg-[#242424] hover:bg-[#2A2A2A] transition-all duration-300 text-left">
-                            <i class="fas fa-cog text-green-500 mb-2"></i>
-                            <p class="font-medium">Settings</p>
-                            <p class="text-sm text-gray-400">Configure platform</p>
-                      </a>
+                        <a href="/admin/settings" class="relative group overflow-hidden">
+                            <div class="p-5 rounded-xl bg-gray-800/80 border border-indigo-500/20 hover:border-indigo-500/40 transition-all duration-300 flex flex-col items-center text-center group-hover:bg-blue-900/20">
+                                <div class="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center mb-3">
+                                    <i class="fas fa-cogs text-blue-500 text-xl"></i>
+                                </div>
+                                <h3 class="font-medium mb-1">System Settings</h3>
+                                <p class="text-xs text-gray-400">Configure platform</p>
+                                <div class="absolute inset-0 bg-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl"></div>
+                            </div>
+                        </a>
+                        <a href="/admin/plans" class="relative group overflow-hidden">
+                            <div class="p-5 rounded-xl bg-gray-800/80 border border-indigo-500/20 hover:border-indigo-500/40 transition-all duration-300 flex flex-col items-center text-center group-hover:bg-green-900/20">
+                                <div class="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center mb-3">
+                                    <i class="fas fa-tags text-green-500 text-xl"></i>
+                                </div>
+                                <h3 class="font-medium mb-1">Manage Plans</h3>
+                                <p class="text-xs text-gray-400">Edit service packages</p>
+                                <div class="absolute inset-0 bg-green-500/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl"></div>
+                            </div>
+                        </a>
                     </div>
                 </div>
 
-                <div class="bg-[#1A1A1A] rounded-xl p-6 animate-fade-in">
-                    <h2 class="text-xl font-semibold mb-6">System Status</h2>
+                <!-- System Status -->
+                <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl p-6 animate-fade-in shadow-lg">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl font-bold gradient-text">System Status</h2>
+                        <button class="bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-400 px-3 py-1.5 rounded-lg text-sm flex items-center space-x-1 transition-all duration-300 border border-indigo-500/30">
+                            <i class="fas fa-sync-alt"></i>
+                            <span>Refresh</span>
+                        </button>
+                    </div>
                     <div class="space-y-4">
-                        <div class="flex items-center justify-between p-4 rounded-lg bg-[#242424]">
-                            <div class="flex items-center">
-                                <div class="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center mr-4">
-                                    <i class="fas fa-check text-green-500"></i>
+                        <div class="flex items-center justify-between p-4 rounded-xl bg-gray-800/50 border border-green-500/20 hover:border-green-500/40 transition-all duration-300">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center">
+                                    <i class="fas fa-globe text-green-500"></i>
                                 </div>
                                 <div>
-                                    <p class="font-medium">API Status</p>
-                                    <p class="text-sm text-gray-400">All systems operational</p>
+                                    <h3 class="font-medium">API Status</h3>
+                                    <p class="text-xs text-gray-400">All systems operational</p>
                                 </div>
                             </div>
-                            <span class="text-green-500">Online</span>
+                            <div class="flex items-center space-x-2">
+                                <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                                <span class="text-green-400 text-sm">Online</span>
+                            </div>
                         </div>
-                        <div class="flex items-center justify-between p-4 rounded-lg bg-[#242424]">
-                            <div class="flex items-center">
-                                <div class="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center mr-4">
-                                    <i class="fas fa-check text-green-500"></i>
+                        
+                        <div class="flex items-center justify-between p-4 rounded-xl bg-gray-800/50 border border-green-500/20 hover:border-green-500/40 transition-all duration-300">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center">
+                                    <i class="fas fa-database text-green-500"></i>
                                 </div>
                                 <div>
-                                    <p class="font-medium">Database</p>
-                                    <p class="text-sm text-gray-400">Connection stable</p>
+                                    <h3 class="font-medium">Database</h3>
+                                    <p class="text-xs text-gray-400">Connection stable</p>
                                 </div>
                             </div>
-                            <span class="text-green-500">Online</span>
+                            <div class="flex items-center space-x-2">
+                                <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                                <span class="text-green-400 text-sm">Online</span>
+                            </div>
                         </div>
-                        <div class="flex items-center justify-between p-4 rounded-lg bg-[#242424]">
-                            <div class="flex items-center">
-                                <div class="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center mr-4">
-                                    <i class="fas fa-check text-green-500"></i>
+                        
+                        <div class="flex items-center justify-between p-4 rounded-xl bg-gray-800/50 border border-green-500/20 hover:border-green-500/40 transition-all duration-300">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center">
+                                    <i class="fas fa-layer-group text-green-500"></i>
                                 </div>
                                 <div>
-                                    <p class="font-medium">Pterodactyl</p>
-                                    <p class="text-sm text-gray-400">Panel connected</p>
+                                    <h3 class="font-medium">Pterodactyl Panel</h3>
+                                    <p class="text-xs text-gray-400">Integration working</p>
                                 </div>
                             </div>
-                            <span class="text-green-500">Online</span>
+                            <div class="flex items-center space-x-2">
+                                <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                                <span class="text-green-400 text-sm">Online</span>
+                            </div>
                         </div>
-                  </div>
+                        
+                        <div class="flex items-center justify-between p-4 rounded-xl bg-gray-800/50 border border-amber-500/20 hover:border-amber-500/40 transition-all duration-300">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center">
+                                    <i class="fas fa-hdd text-amber-500"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-medium">Storage</h3>
+                                    <p class="text-xs text-gray-400">75% capacity</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                                <span class="text-amber-400 text-sm">Warning</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-    </main>
+
+            <!-- User Activity + Latest Servers -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Recent User Activity -->
+                <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl p-6 animate-fade-in shadow-lg">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl font-bold gradient-text">Recent User Activity</h2>
+                        <a href="/admin/logs" class="text-indigo-400 hover:text-indigo-300 text-sm transition-all">
+                            View All <i class="fas fa-chevron-right ml-1 text-xs"></i>
+                        </a>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex items-center p-3 rounded-xl bg-gray-800/50 hover:bg-gray-800/80 transition-all duration-300 border border-indigo-500/10 hover:border-indigo-500/20">
+                            <div class="w-10 h-10 rounded-full bg-indigo-500/10 flex items-center justify-center mr-4">
+                                <i class="fas fa-user-circle text-indigo-400"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex justify-between">
+                                    <p class="font-medium">Alex_Gaming</p>
+                                    <span class="text-xs text-gray-400">5 min ago</span>
+                                </div>
+                                <p class="text-sm text-gray-400">Created new Minecraft server</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center p-3 rounded-xl bg-gray-800/50 hover:bg-gray-800/80 transition-all duration-300 border border-indigo-500/10 hover:border-indigo-500/20">
+                            <div class="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center mr-4">
+                                <i class="fas fa-user-circle text-purple-400"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex justify-between">
+                                    <p class="font-medium">ServerMaster</p>
+                                    <span class="text-xs text-gray-400">12 min ago</span>
+                                </div>
+                                <p class="text-sm text-gray-400">Purchased server renewal</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center p-3 rounded-xl bg-gray-800/50 hover:bg-gray-800/80 transition-all duration-300 border border-indigo-500/10 hover:border-indigo-500/20">
+                            <div class="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center mr-4">
+                                <i class="fas fa-user-circle text-blue-400"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex justify-between">
+                                    <p class="font-medium">CraftQueen</p>
+                                    <span class="text-xs text-gray-400">37 min ago</span>
+                                </div>
+                                <p class="text-sm text-gray-400">Created support ticket #4952</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center p-3 rounded-xl bg-gray-800/50 hover:bg-gray-800/80 transition-all duration-300 border border-indigo-500/10 hover:border-indigo-500/20">
+                            <div class="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center mr-4">
+                                <i class="fas fa-user-circle text-green-400"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex justify-between">
+                                    <p class="font-medium">MinecraftPro</p>
+                                    <span class="text-xs text-gray-400">1 hour ago</span>
+                                </div>
+                                <p class="text-sm text-gray-400">Upgraded server resources</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Latest Servers -->
+                <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl p-6 animate-fade-in shadow-lg">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl font-bold gradient-text">Latest Servers</h2>
+                        <a href="/admin/servers" class="text-indigo-400 hover:text-indigo-300 text-sm transition-all">
+                            View All <i class="fas fa-chevron-right ml-1 text-xs"></i>
+                        </a>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex items-center p-3 rounded-xl bg-gray-800/50 hover:bg-gray-800/80 transition-all duration-300 border border-indigo-500/10 hover:border-indigo-500/20">
+                            <div class="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center mr-4">
+                                <i class="fas fa-cube text-green-500"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex justify-between">
+                                    <p class="font-medium">SkyWars Kingdom</p>
+                                    <span class="text-xs text-green-400">Online</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <p class="text-sm text-gray-400">Owner: Alex_Gaming</p>
+                                    <span class="text-xs text-gray-400">1 hour ago</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center p-3 rounded-xl bg-gray-800/50 hover:bg-gray-800/80 transition-all duration-300 border border-indigo-500/10 hover:border-indigo-500/20">
+                            <div class="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center mr-4">
+                                <i class="fas fa-cube text-green-500"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex justify-between">
+                                    <p class="font-medium">Survival Plus</p>
+                                    <span class="text-xs text-green-400">Online</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <p class="text-sm text-gray-400">Owner: ServerMaster</p>
+                                    <span class="text-xs text-gray-400">3 hours ago</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center p-3 rounded-xl bg-gray-800/50 hover:bg-gray-800/80 transition-all duration-300 border border-indigo-500/10 hover:border-indigo-500/20">
+                            <div class="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center mr-4">
+                                <i class="fas fa-cube text-red-500"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex justify-between">
+                                    <p class="font-medium">Creative World</p>
+                                    <span class="text-xs text-red-400">Offline</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <p class="text-sm text-gray-400">Owner: CraftQueen</p>
+                                    <span class="text-xs text-gray-400">5 hours ago</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center p-3 rounded-xl bg-gray-800/50 hover:bg-gray-800/80 transition-all duration-300 border border-indigo-500/10 hover:border-indigo-500/20">
+                            <div class="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center mr-4">
+                                <i class="fas fa-cube text-green-500"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex justify-between">
+                                    <p class="font-medium">RPG Adventures</p>
+                                    <span class="text-xs text-green-400">Online</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <p class="text-sm text-gray-400">Owner: MinecraftPro</p>
+                                    <span class="text-xs text-gray-400">12 hours ago</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simulate loading data with animation
+            setTimeout(() => {
+                // Update user count
+                const userCount = document.querySelector('.user-count');
+                userCount.textContent = '356';
+                document.querySelector('.user-progress').style.width = '75%';
+                
+                // Update server count
+                const serverCount = document.querySelector('.server-count');
+                serverCount.textContent = '128';
+                document.querySelector('.server-progress').style.width = '60%';
+                
+                // Update revenue
+                const revenueValue = document.querySelector('.revenue-value');
+                revenueValue.textContent = '$5,892';
+                document.querySelector('.revenue-progress').style.width = '85%';
+                
+                // Update ticket count
+                const ticketCount = document.querySelector('.ticket-count');
+                ticketCount.textContent = '23';
+                document.querySelector('.ticket-progress').style.width = '30%';
+            }, 500);
+            
+            // Close buttons for alerts (if added later)
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.bg-red-500/10 button, .bg-green-500/10 button')) {
+                    e.target.closest('div[class^="bg-"]').remove();
+                }
+            });
+        });
+    </script>
 </body>
 </html>

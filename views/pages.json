@@ -30,6 +30,8 @@
     "failedpurchasecpu": "/store",
     "purchaseservers": "/store",
     "failedpurchaseservers": "/store",
+    "purchasebundle": "/store",
+    "failedpurchasebundle": "/store",
     "arcioerror": "/afk",
     "missingorinvalidcouponcode": "/redeem",
     "successfullyredeemedcoupon": "/redeem",

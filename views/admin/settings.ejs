@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Settings - <%= settings.name %> Admin</title>
-    <link rel="icon" type="image/png" href="<%= settings.logo %>">
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title><%= settings.name %> - Admin Settings</title>
+    <link rel="icon" type="image/png" href="https://i.imgur.com/GY3cXet.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
     <style>
@@ -15,122 +15,211 @@
         .animate-fade-in {
             animation: fadeIn 0.3s ease-out forwards;
         }
+        .shadow-glow {
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+        }
+        .gradient-text {
+            background: linear-gradient(45deg, #6366f1, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .bg-grid {
+            background-image: radial-gradient(rgba(99, 102, 241, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .card-hover:hover {
+            transform: translateY(-3px);
+        }
+        .input-focus:focus {
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.3);
+        }
     </style>
 </head>
-<body class="bg-[#0F0F0F] text-white min-h-screen">
+<body class="bg-black text-white min-h-screen">
     <div class="flex">
         <!-- Admin Navigation -->
         <%- include('../components/admin-navigation') %>
-
+        
         <!-- Main Content -->
         <main class="flex-1 ml-72 p-8">
-            <div class="flex items-center justify-between mb-8">
-                <div>
-                    <h1 class="text-3xl font-bold">Settings</h1>
-                    <p class="text-gray-400">Configure your dashboard settings</p>
+            <!-- Welcome Section -->
+            <div class="relative rounded-2xl overflow-hidden mb-8 animate-fade-in shadow-glow">
+                <div class="absolute inset-0 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 backdrop-blur-sm bg-grid"></div>
+                <div class="relative p-8">
+                    <h1 class="text-4xl font-bold mb-2 gradient-text">Admin Settings</h1>
+                    <p class="text-gray-300">Configure and customize your dashboard appearance and functionality.</p>
                 </div>
             </div>
 
             <!-- Settings Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- General Settings -->
-                <div class="bg-[#1A1A1A] rounded-xl p-6 animate-fade-in">
-                    <h2 class="text-xl font-semibold mb-6">General Settings</h2>
+                <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl p-6 hover:bg-gray-900/90 transition-all duration-300 animate-fade-in card-hover shadow-lg">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center">
+                            <i class="fas fa-cog text-indigo-500"></i>
+                        </div>
+                        <h2 class="text-xl font-semibold gradient-text">General Settings</h2>
+                    </div>
                     <form id="generalSettingsForm" class="space-y-4">
                         <div>
-                            <label class="block text-gray-400 mb-2">Dashboard Name</label>
-                            <input type="text" id="dashboardName" value="<%= settings.name %>" class="w-full bg-[#242424] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                            <label class="block text-gray-400 mb-2 text-sm">Dashboard Name</label>
+                            <input type="text" id="dashboardName" value="<%= settings.name %>" class="w-full bg-gray-800/80 border border-indigo-500/30 rounded-lg px-4 py-3 focus:outline-none input-focus text-white">
                         </div>
                         <div>
-                            <label class="block text-gray-400 mb-2">Logo URL</label>
-                            <input type="text" id="logoUrl" value="<%= settings.logo %>" class="w-full bg-[#242424] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                            <label class="block text-gray-400 mb-2 text-sm">Logo URL</label>
+                            <input type="text" id="logoUrl" value="<%= settings.logo %>" class="w-full bg-gray-800/80 border border-indigo-500/30 rounded-lg px-4 py-3 focus:outline-none input-focus text-white">
                         </div>
                         <div>
-                            <label class="block text-gray-400 mb-2">Domain</label>
-                            <input type="text" id="domain" value="<%= settings.pterodactyl.domain %>" class="w-full bg-[#242424] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                            <label class="block text-gray-400 mb-2 text-sm">Domain</label>
+                            <input type="text" id="domain" value="<%= settings.pterodactyl.domain %>" class="w-full bg-gray-800/80 border border-indigo-500/30 rounded-lg px-4 py-3 focus:outline-none input-focus text-white">
                         </div>
-                        <button type="submit" class="w-full px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 transition-all duration-300">
+                        <button type="submit" class="w-full px-4 py-3 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 shadow-lg shadow-indigo-500/20 font-medium">
                             Save Changes
                         </button>
                     </form>
                 </div>
 
                 <!-- Resource Settings -->
-                <div class="bg-[#1A1A1A] rounded-xl p-6 animate-fade-in">
-                    <h2 class="text-xl font-semibold mb-6">Resource Settings</h2>
+                <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl p-6 hover:bg-gray-900/90 transition-all duration-300 animate-fade-in card-hover shadow-lg">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
+                            <i class="fas fa-server text-purple-500"></i>
+                        </div>
+                        <h2 class="text-xl font-semibold gradient-text">Resource Settings</h2>
+                    </div>
                     <form id="resourceSettingsForm" class="space-y-4">
                         <div>
-                            <label class="block text-gray-400 mb-2">Default RAM (MB)</label>
-                            <input type="number" id="defaultRam" value="<%= settings.api.client.packages.default.ram %>" class="w-full bg-[#242424] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                            <label class="block text-gray-400 mb-2 text-sm">Default RAM (MB)</label>
+                            <input type="number" id="defaultRam" value="<%= settings.api.client.packages.default.ram %>" class="w-full bg-gray-800/80 border border-indigo-500/30 rounded-lg px-4 py-3 focus:outline-none input-focus text-white">
                         </div>
                         <div>
-                            <label class="block text-gray-400 mb-2">Default CPU (%)</label>
-                            <input type="number" id="defaultCpu" value="<%= settings.api.client.packages.default.cpu %>" class="w-full bg-[#242424] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                            <label class="block text-gray-400 mb-2 text-sm">Default CPU (%)</label>
+                            <input type="number" id="defaultCpu" value="<%= settings.api.client.packages.default.cpu %>" class="w-full bg-gray-800/80 border border-indigo-500/30 rounded-lg px-4 py-3 focus:outline-none input-focus text-white">
                         </div>
                         <div>
-                            <label class="block text-gray-400 mb-2">Default Disk (MB)</label>
-                            <input type="number" id="defaultDisk" value="<%= settings.api.client.packages.default.disk %>" class="w-full bg-[#242424] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                            <label class="block text-gray-400 mb-2 text-sm">Default Disk (MB)</label>
+                            <input type="number" id="defaultDisk" value="<%= settings.api.client.packages.default.disk %>" class="w-full bg-gray-800/80 border border-indigo-500/30 rounded-lg px-4 py-3 focus:outline-none input-focus text-white">
                         </div>
                         <div>
-                            <label class="block text-gray-400 mb-2">Default Servers</label>
-                            <input type="number" id="defaultServers" value="<%= settings.api.client.packages.default.servers %>" class="w-full bg-[#242424] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                            <label class="block text-gray-400 mb-2 text-sm">Default Servers</label>
+                            <input type="number" id="defaultServers" value="<%= settings.api.client.packages.default.servers %>" class="w-full bg-gray-800/80 border border-indigo-500/30 rounded-lg px-4 py-3 focus:outline-none input-focus text-white">
                         </div>
-                        <button type="submit" class="w-full px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 transition-all duration-300">
+                        <button type="submit" class="w-full px-4 py-3 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 shadow-lg shadow-indigo-500/20 font-medium">
                             Save Changes
                         </button>
                     </form>
                 </div>
 
                 <!-- API Settings -->
-                <div class="bg-[#1A1A1A] rounded-xl p-6 animate-fade-in">
-                    <h2 class="text-xl font-semibold mb-6">API Settings</h2>
+                <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl p-6 hover:bg-gray-900/90 transition-all duration-300 animate-fade-in card-hover shadow-lg">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
+                            <i class="fas fa-key text-blue-500"></i>
+                        </div>
+                        <h2 class="text-xl font-semibold gradient-text">API Settings</h2>
+                    </div>
                     <form id="apiSettingsForm" class="space-y-4">
                         <div>
-                            <label class="block text-gray-400 mb-2">API Key</label>
+                            <label class="block text-gray-400 mb-2 text-sm">API Key</label>
                             <div class="relative">
-                                <input type="password" id="apiKey" value="<%= settings.pterodactyl.key %>" class="w-full bg-[#242424] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
-                                <button type="button" onclick="toggleApiKey()" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white">
+                                <input type="password" id="apiKey" value="<%= settings.pterodactyl.key %>" class="w-full bg-gray-800/80 border border-indigo-500/30 rounded-lg px-4 py-3 pr-10 focus:outline-none input-focus text-white">
+                                <button type="button" onclick="toggleApiKey()" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-indigo-400 transition-colors">
                                     <i class="fas fa-eye"></i>
                                 </button>
                             </div>
                         </div>
                         <div>
-                            <label class="block text-gray-400 mb-2">Client API Key</label>
+                            <label class="block text-gray-400 mb-2 text-sm">Client API Key</label>
                             <div class="relative">
-                                <input type="password" id="clientApiKey" value="<%= settings.pterodactyl.client %>" class="w-full bg-[#242424] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
-                                <button type="button" onclick="toggleClientApiKey()" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white">
+                                <input type="password" id="clientApiKey" value="<%= settings.pterodactyl.client %>" class="w-full bg-gray-800/80 border border-indigo-500/30 rounded-lg px-4 py-3 pr-10 focus:outline-none input-focus text-white">
+                                <button type="button" onclick="toggleClientApiKey()" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-indigo-400 transition-colors">
                                     <i class="fas fa-eye"></i>
                                 </button>
                             </div>
                         </div>
-                        <button type="submit" class="w-full px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 transition-all duration-300">
+                        <button type="submit" class="w-full px-4 py-3 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 shadow-lg shadow-indigo-500/20 font-medium">
                             Save Changes
                         </button>
                     </form>
                 </div>
 
                 <!-- Discord Settings -->
-                <div class="bg-[#1A1A1A] rounded-xl p-6 animate-fade-in">
-                    <h2 class="text-xl font-semibold mb-6">Discord Settings</h2>
+                <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl p-6 hover:bg-gray-900/90 transition-all duration-300 animate-fade-in card-hover shadow-lg">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center">
+                            <i class="fab fa-discord text-indigo-500"></i>
+                        </div>
+                        <h2 class="text-xl font-semibold gradient-text">Discord Settings</h2>
+                    </div>
                     <form id="discordSettingsForm" class="space-y-4">
                         <div>
-                            <label class="block text-gray-400 mb-2">Client ID</label>
-                            <input type="text" id="clientId" value="<%= settings.api.client.oauth2.id %>" class="w-full bg-[#242424] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                            <label class="block text-gray-400 mb-2 text-sm">Client ID</label>
+                            <input type="text" id="clientId" value="<%= settings.api.client.oauth2.id %>" class="w-full bg-gray-800/80 border border-indigo-500/30 rounded-lg px-4 py-3 focus:outline-none input-focus text-white">
                         </div>
                         <div>
-                            <label class="block text-gray-400 mb-2">Client Secret</label>
+                            <label class="block text-gray-400 mb-2 text-sm">Client Secret</label>
                             <div class="relative">
-                                <input type="password" id="clientSecret" value="<%= settings.api.client.oauth2.secret %>" class="w-full bg-[#242424] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
-                                <button type="button" onclick="toggleClientSecret()" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white">
+                                <input type="password" id="clientSecret" value="<%= settings.api.client.oauth2.secret %>" class="w-full bg-gray-800/80 border border-indigo-500/30 rounded-lg px-4 py-3 pr-10 focus:outline-none input-focus text-white">
+                                <button type="button" onclick="toggleClientSecret()" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-indigo-400 transition-colors">
                                     <i class="fas fa-eye"></i>
                                 </button>
                             </div>
                         </div>
                         <div>
-                            <label class="block text-gray-400 mb-2">Callback URL</label>
-                            <input type="text" id="callbackUrl" value="<%= settings.api.client.oauth2.link + settings.api.client.oauth2.callbackpath %>" class="w-full bg-[#242424] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                            <label class="block text-gray-400 mb-2 text-sm">Callback URL</label>
+                            <input type="text" id="callbackUrl" value="<%= settings.api.client.oauth2.link + settings.api.client.oauth2.callbackpath %>" class="w-full bg-gray-800/80 border border-indigo-500/30 rounded-lg px-4 py-3 focus:outline-none input-focus text-white">
                         </div>
-                        <button type="submit" class="w-full px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 transition-all duration-300">
+                        <button type="submit" class="w-full px-4 py-3 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 shadow-lg shadow-indigo-500/20 font-medium">
+                            Save Changes
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Announcement Settings -->
+                <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl p-6 hover:bg-gray-900/90 transition-all duration-300 animate-fade-in card-hover shadow-lg">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center">
+                            <i class="fas fa-bullhorn text-amber-500"></i>
+                        </div>
+                        <h2 class="text-xl font-semibold gradient-text">Announcement Settings</h2>
+                    </div>
+                    <form id="announcementSettingsForm" class="space-y-4">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="announcementEnabled" class="sr-only peer" <%= settings.announcements && settings.announcements.enabled ? 'checked' : '' %>>
+                                <div class="w-11 h-6 bg-gray-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                            </label>
+                            <span class="text-gray-300 text-sm">Enable Announcements</span>
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 mb-2 text-sm">Announcement Message</label>
+                            <textarea id="announcementMessage" rows="4" class="w-full bg-gray-800/80 border border-indigo-500/30 rounded-lg px-4 py-3 focus:outline-none input-focus text-white"><%= settings.announcements ? settings.announcements.message : '' %></textarea>
+                        </div>
+                        <button type="submit" class="w-full px-4 py-3 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 shadow-lg shadow-indigo-500/20 font-medium">
+                            Save Changes
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Renewal Settings -->
+                <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl p-6 hover:bg-gray-900/90 transition-all duration-300 animate-fade-in card-hover shadow-lg">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center">
+                            <i class="fas fa-sync text-green-500"></i>
+                        </div>
+                        <h2 class="text-xl font-semibold gradient-text">Renewal Settings</h2>
+                    </div>
+                    <form id="renewalSettingsForm" class="space-y-4">
+                        <div>
+                            <label class="block text-gray-400 mb-2 text-sm">Renewal Cost (Coins)</label>
+                            <input type="number" id="renewalCost" value="<%= settings.renewals ? settings.renewals.cost : 0 %>" class="w-full bg-gray-800/80 border border-indigo-500/30 rounded-lg px-4 py-3 focus:outline-none input-focus text-white">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 mb-2 text-sm">Renewal Duration (Days)</label>
+                            <input type="number" id="renewalDuration" value="<%= settings.renewals ? settings.renewals.days : 0 %>" class="w-full bg-gray-800/80 border border-indigo-500/30 rounded-lg px-4 py-3 focus:outline-none input-focus text-white">
+                        </div>
+                        <button type="submit" class="w-full px-4 py-3 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 shadow-lg shadow-indigo-500/20 font-medium">
                             Save Changes
                         </button>
                     </form>
@@ -140,20 +229,47 @@
     </div>
 
     <script>
-        // Toggle password visibility
+        // Toggle password visibility functions
         function toggleApiKey() {
             const input = document.getElementById('apiKey');
-            input.type = input.type === 'password' ? 'text' : 'password';
+            const icon = event.currentTarget.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
         }
 
         function toggleClientApiKey() {
             const input = document.getElementById('clientApiKey');
-            input.type = input.type === 'password' ? 'text' : 'password';
+            const icon = event.currentTarget.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
         }
 
         function toggleClientSecret() {
             const input = document.getElementById('clientSecret');
-            input.type = input.type === 'password' ? 'text' : 'password';
+            const icon = event.currentTarget.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
         }
 
         // Handle form submissions
@@ -198,6 +314,24 @@
             await updateSettings(data);
         });
 
+        document.getElementById('announcementSettingsForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = {
+                'announcements.enabled': document.getElementById('announcementEnabled').checked,
+                'announcements.message': document.getElementById('announcementMessage').value
+            };
+            await updateSettings(data);
+        });
+
+        document.getElementById('renewalSettingsForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = {
+                'renewals.cost': parseInt(document.getElementById('renewalCost').value),
+                'renewals.days': parseInt(document.getElementById('renewalDuration').value)
+            };
+            await updateSettings(data);
+        });
+
         async function updateSettings(data) {
             try {
                 const response = await fetch('/admin/api/settings', {
@@ -210,7 +344,14 @@
 
                 if (response.ok) {
                     showNotification('Settings updated successfully', 'success');
-                    // Reload the page after a short delay to show the notification
+                    // Add subtle animation to form
+                    const form = event.target;
+                    form.classList.add('opacity-50');
+                    setTimeout(() => {
+                        form.classList.remove('opacity-50');
+                    }, 300);
+                    
+                    // Only reload the page if specifically needed
                     setTimeout(() => {
                         window.location.reload();
                     }, 1500);
@@ -225,14 +366,56 @@
         }
 
         function showNotification(message, type) {
+            // Remove any existing notifications first
+            const existingNotifications = document.querySelectorAll('.notification-toast');
+            existingNotifications.forEach(n => n.remove());
+            
+            // Create new notification
             const notification = document.createElement('div');
-            notification.className = `fixed bottom-4 right-4 px-6 py-3 rounded-lg text-white ${
-                type === 'success' ? 'bg-green-500' : 'bg-red-500'
-            } animate-fade-in`;
-            notification.textContent = message;
+            notification.className = `notification-toast fixed bottom-4 right-4 px-6 py-4 rounded-lg text-white flex items-center space-x-3 z-50 animate-fade-in shadow-lg ${
+                type === 'success' ? 'bg-gradient-to-r from-green-600 to-green-700' : 'bg-gradient-to-r from-red-600 to-red-700'
+            }`;
+            
+            // Add icon
+            const icon = document.createElement('i');
+            icon.className = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
+            
+            // Create message element
+            const messageEl = document.createElement('span');
+            messageEl.textContent = message;
+            
+            // Append elements
+            notification.appendChild(icon);
+            notification.appendChild(messageEl);
             document.body.appendChild(notification);
-            setTimeout(() => notification.remove(), 3000);
+            
+            // Add subtle pulse animation
+            setTimeout(() => {
+                notification.classList.add('scale-105');
+                setTimeout(() => {
+                    notification.classList.remove('scale-105');
+                }, 150);
+            }, 200);
+            
+            // Remove after delay
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateY(10px)';
+                notification.style.transition = 'opacity 0.3s, transform 0.3s';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
         }
+
+        // Initialize animations for cards with delay
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.card-hover');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 100 * index);
+            });
+        });
     </script>
 </body>
 </html>

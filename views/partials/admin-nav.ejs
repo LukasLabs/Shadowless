@@ -1,57 +1,332 @@
-<!-- Admin Sidebar -->
-<nav class="fixed left-0 top-0 h-screen w-72 bg-[#0F0F0F] border-r border-[#1A1A1A]">
-    <div class="flex flex-col h-full">
-        <!-- Logo and Brand -->
-        <div class="p-6 border-b border-[#1A1A1A]">
-            <div class="flex items-center space-x-3">
-                <img class="w-8 h-8 rounded-lg" src="<%= settings.logo %>" alt="Logo">
-                <span class="text-xl font-semibold text-white"><%= settings.name %></span>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <link rel="icon" type="image/x-icon" href="https://i.imgur.com/GY3cXet.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateX(-10px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
+      70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+    @keyframes float {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+      100% { transform: translateY(0); }
+    }
+    @keyframes glowing {
+      0% { box-shadow: 0 0 5px rgba(239, 68, 68, 0.5); }
+      50% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.8); }
+      100% { box-shadow: 0 0 5px rgba(239, 68, 68, 0.5); }
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.3s ease-out forwards;
+    }
+    .animate-float {
+      animation: float 2s ease-in-out infinite;
+    }
+    .animate-pulse-red {
+      animation: pulse 2s infinite;
+    }
+    .animate-glow {
+      animation: glowing 2s infinite;
+    }
+    .gradient-text {
+      background: linear-gradient(45deg, #ef4444, #f43f5e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .noise-bg {
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+      opacity: 0.05;
+    }
+    .nav-indicator {
+      transition: transform 0.3s ease;
+    }
+    .admin-blur {
+      backdrop-filter: blur(20px);
+    }
+    .admin-glassmorphism {
+      background: rgba(15, 15, 15, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .data-flow {
+      background: linear-gradient(90deg, rgba(239, 68, 68, 0) 0%, rgba(239, 68, 68, 0.1) 50%, rgba(239, 68, 68, 0) 100%);
+      background-size: 200% 100%;
+      animation: dataFlow 3s linear infinite;
+    }
+    @keyframes dataFlow {
+      0% { background-position: 100% 0; }
+      100% { background-position: -100% 0; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Mobile Menu Toggle Button -->
+  <div class="lg:hidden fixed top-4 left-4 z-50">
+    <button id="mobile-toggle" class="p-2 rounded-lg bg-gray-900/90 border border-red-500/20 text-white animate-pulse-red">
+      <i class="fas fa-bars"></i>
+    </button>
+  </div>
+
+  <!-- Admin Sidebar -->
+  <nav id="admin-sidebar" class="fixed left-0 top-0 h-screen w-72 admin-glassmorphism border-r border-[#1A1A1A] transition-all duration-300 ease-in-out transform lg:translate-x-0 -translate-x-full z-40">
+    <div class="flex flex-col h-full relative">
+      <!-- Animated Background Effects -->
+      <div class="absolute inset-0 noise-bg pointer-events-none"></div>
+      <div class="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-red-600/5 to-transparent pointer-events-none"></div>
+      
+      <!-- Admin Badge -->
+      <div class="absolute top-3 right-3">
+        <span class="px-2 py-1 text-xs font-bold rounded-md bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg shadow-red-500/20 uppercase tracking-wider">Admin</span>
+      </div>
+      
+      <!-- Logo and Brand -->
+      <div class="p-6 border-b border-[#1A1A1A] relative">
+        <div class="flex items-center space-x-3 animate-float">
+          <div class="relative">
+            <div class="absolute inset-0 bg-red-500 rounded-lg blur opacity-30 animate-pulse-red"></div>
+            <img class="w-10 h-10 rounded-lg relative" src="<%= settings.logo || '/assets/logo.png' %>" alt="Logo">
+          </div>
+          <span class="text-xl font-bold gradient-text"><%= settings.name || 'ShadowlessDash' %></span>
+        </div>
+      </div>
+
+      <!-- Admin Profile -->
+      <div class="p-4 border-b border-[#1A1A1A]">
+        <div class="relative overflow-hidden">
+          <div class="absolute inset-0 bg-gradient-to-r from-red-600/10 to-pink-600/10 rounded-xl"></div>
+          <div class="flex items-center space-x-3 p-4 rounded-xl bg-gradient-to-r from-[#1A1A1A] to-[#242424] hover:from-[#242424] hover:to-[#2A2A2A] transition-all duration-300 shadow-lg relative">
+            <div class="relative group">
+              <div class="absolute inset-0 bg-red-500/20 rounded-full blur-sm group-hover:bg-red-500/30 transition-all duration-300"></div>
+              <img class="w-10 h-10 rounded-full ring-2 ring-red-500/40 relative" src="https://cdn.discordapp.com/avatars/<%= req.session.userinfo.id %>/<%= req.session.userinfo.avatar %>.jpg?size=1024" alt="Admin avatar">
+              <div class="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-green-500 border-2 border-[#242424]"></div>
             </div>
-        </div>
-
-        <!-- Admin Profile -->
-        <div class="p-4 border-b border-[#1A1A1A]">
-            <div class="flex items-center space-x-3 p-3 rounded-xl bg-gradient-to-r from-[#1A1A1A] to-[#242424] hover:from-[#242424] hover:to-[#2A2A2A] transition-all duration-300 shadow-lg">
-                <img class="w-10 h-10 rounded-full ring-2 ring-red-500/20" src="https://cdn.discordapp.com/avatars/<%= req.session.userinfo.id%>/<%= req.session.userinfo.avatar%>.jpg?size=1024" alt="User avatar">
-                <div>
-                    <div class="font-medium text-white"><%= req.session.userinfo.username%></div>
-                    <div class="text-sm text-gray-400 flex items-center">
-                        <i class="fas fa-shield-alt text-red-500 mr-1"></i>
-                        Administrator
-                    </div>
-                </div>
+            <div>
+              <div class="font-medium text-white"><%= req.session.userinfo.username %></div>
+              <div class="text-sm text-gray-400 flex items-center">
+                <i class="fas fa-shield-alt text-red-500 mr-1"></i>
+                <span class="font-medium text-red-400">Administrator</span>
+              </div>
             </div>
+            <!-- Status Indicator -->
+            <div class="absolute top-2 right-2 flex items-center space-x-1">
+              <span class="w-2 h-2 rounded-full bg-green-500 shadow-green-500/40 animate-pulse"></span>
+              <span class="text-xs text-green-400">Online</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- System Status -->
+      <div class="px-4 py-3 border-b border-[#1A1A1A]">
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-xs text-gray-400 uppercase tracking-wider font-medium">System Status</span>
+          <span class="text-xs text-green-400 flex items-center">
+            <span class="w-2 h-2 rounded-full bg-green-500 mr-1"></span>
+            Operational
+          </span>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div class="bg-[#1A1A1A] rounded-lg p-2">
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-xs text-gray-400">CPU</span>
+              <span class="text-xs text-white">24%</span>
+            </div>
+            <div class="h-1.5 bg-[#242424] rounded-full overflow-hidden">
+              <div class="h-full w-1/4 bg-gradient-to-r from-green-400 to-green-500 rounded-full"></div>
+            </div>
+          </div>
+          <div class="bg-[#1A1A1A] rounded-lg p-2">
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-xs text-gray-400">RAM</span>
+              <span class="text-xs text-white">42%</span>
+            </div>
+            <div class="h-1.5 bg-[#242424] rounded-full overflow-hidden">
+              <div class="h-full w-5/12 bg-gradient-to-r from-blue-400 to-blue-500 rounded-full"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Links -->
+      <div class="flex-1 p-4 space-y-1 overflow-y-auto relative" id="nav-container">
+        <!-- Active nav indicator that moves with selection -->
+        <div id="nav-indicator" class="nav-indicator absolute left-4 w-[calc(100%-2rem)] h-12 bg-gradient-to-r from-red-600/10 to-pink-600/10 rounded-xl -z-10 opacity-0 pointer-events-none"></div>
+        
+        <!-- Quick Actions -->
+        <div class="px-2 py-1 text-xs text-gray-500 uppercase tracking-wider">Quick Actions</div>
+        <div class="grid grid-cols-2 gap-2 mb-3">
+          <a href="/admin/create-user" class="flex flex-col items-center p-3 rounded-xl text-gray-300 hover:text-white bg-[#1A1A1A] hover:bg-[#242424] transition-all duration-300 group">
+            <div class="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500/20 transition-all duration-300 mb-1">
+              <i class="fas fa-user-plus w-4 h-4 group-hover:text-blue-400 transition-colors duration-300"></i>
+            </div>
+            <span class="text-xs">Add User</span>
+          </a>
+          <a href="/admin/maintenance" class="flex flex-col items-center p-3 rounded-xl text-gray-300 hover:text-white bg-[#1A1A1A] hover:bg-[#242424] transition-all duration-300 group">
+            <div class="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center group-hover:bg-amber-500/20 transition-all duration-300 mb-1">
+              <i class="fas fa-wrench w-4 h-4 group-hover:text-amber-400 transition-colors duration-300"></i>
+            </div>
+            <span class="text-xs">Maintenance</span>
+          </a>
         </div>
 
-        <!-- Admin Navigation Links -->
-        <div class="flex-1 p-4 space-y-2 overflow-y-auto">
-            <a href="/admin" class="flex items-center space-x-3 p-3 rounded-xl transition-all duration-300 shadow-lg <%= req.path === '/admin' ? 'text-white bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 hover:shadow-red-500/20' : 'text-gray-300 hover:text-white hover:bg-[#1A1A1A]' %>">
-                <i class="fas fa-home w-5 h-5"></i>
-                <span>Dashboard</span>
-            </a>
+        <!-- Main Navigation -->  
+        <div class="px-2 py-1 text-xs text-gray-500 uppercase tracking-wider">Dashboard</div>
+        <a href="/admin" data-nav="admin-dashboard" class="nav-link flex items-center space-x-3 p-3 rounded-xl text-gray-300 hover:text-white transition-all duration-300 group relative overflow-hidden">
+          <div class="data-flow absolute inset-0 opacity-0 group-hover:opacity-100"></div>
+          <div class="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center group-hover:bg-red-500/20 transition-all duration-300">
+            <i class="fas fa-tachometer-alt w-4 h-4 group-hover:text-red-400 transition-colors duration-300"></i>
+          </div>
+          <span>Dashboard</span>
+        </a>
 
-            <a href="/admin/users" class="flex items-center space-x-3 p-3 rounded-xl transition-all duration-300 shadow-lg <%= req.path === '/admin/users' ? 'text-white bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 hover:shadow-red-500/20' : 'text-gray-300 hover:text-white hover:bg-[#1A1A1A]' %>">
-                <i class="fas fa-users w-5 h-5 group-hover:text-blue-500 transition-colors duration-300"></i>
-                <span>Users</span>
-            </a>
+        <div class="px-2 py-1 text-xs text-gray-500 uppercase tracking-wider mt-3">Management</div>
+        <a href="/admin/users" data-nav="admin-users" class="nav-link flex items-center space-x-3 p-3 rounded-xl text-gray-300 hover:text-white transition-all duration-300 group relative overflow-hidden">
+          <div class="data-flow absolute inset-0 opacity-0 group-hover:opacity-100"></div>
+          <div class="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500/20 transition-all duration-300">
+            <i class="fas fa-users w-4 h-4 group-hover:text-blue-400 transition-colors duration-300"></i>
+          </div>
+          <span>User Management</span>
+          <span class="ml-auto bg-blue-500/10 text-blue-400 text-xs px-2 py-0.5 rounded-lg">24</span>
+        </a>
 
-            <a href="/admin/servers" class="flex items-center space-x-3 p-3 rounded-xl transition-all duration-300 shadow-lg <%= req.path === '/admin/servers' ? 'text-white bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 hover:shadow-red-500/20' : 'text-gray-300 hover:text-white hover:bg-[#1A1A1A]' %>">
-                <i class="fas fa-server w-5 h-5 group-hover:text-purple-500 transition-colors duration-300"></i>
-                <span>Servers</span>
-            </a>
+        <a href="/admin/servers" data-nav="admin-servers" class="nav-link flex items-center space-x-3 p-3 rounded-xl text-gray-300 hover:text-white transition-all duration-300 group relative overflow-hidden">
+          <div class="data-flow absolute inset-0 opacity-0 group-hover:opacity-100"></div>
+          <div class="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center group-hover:bg-purple-500/20 transition-all duration-300">
+            <i class="fas fa-server w-4 h-4 group-hover:text-purple-400 transition-colors duration-300"></i>
+          </div>
+          <span>Server Control</span>
+          <span class="ml-auto bg-purple-500/10 text-purple-400 text-xs px-2 py-0.5 rounded-lg">12</span>
+        </a>
 
-            <a href="/admin/settings" class="flex items-center space-x-3 p-3 rounded-xl transition-all duration-300 shadow-lg <%= req.path === '/admin/settings' ? 'text-white bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 hover:shadow-red-500/20' : 'text-gray-300 hover:text-white hover:bg-[#1A1A1A]' %>">
-                <i class="fas fa-cog w-5 h-5 group-hover:text-green-500 transition-colors duration-300"></i>
-                <span>Settings</span>
-            </a>
+        <a href="/admin/resources" data-nav="admin-resources" class="nav-link flex items-center space-x-3 p-3 rounded-xl text-gray-300 hover:text-white transition-all duration-300 group relative overflow-hidden">
+          <div class="data-flow absolute inset-0 opacity-0 group-hover:opacity-100"></div>
+          <div class="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center group-hover:bg-green-500/20 transition-all duration-300">
+            <i class="fas fa-database w-4 h-4 group-hover:text-green-400 transition-colors duration-300"></i>
+          </div>
+          <span>Resources</span>
+        </a>
+
+        <div class="px-2 py-1 text-xs text-gray-500 uppercase tracking-wider mt-3">Configuration</div>
+        <a href="/admin/settings" data-nav="admin-settings" class="nav-link flex items-center space-x-3 p-3 rounded-xl text-gray-300 hover:text-white transition-all duration-300 group relative overflow-hidden">
+          <div class="data-flow absolute inset-0 opacity-0 group-hover:opacity-100"></div>
+          <div class="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center group-hover:bg-amber-500/20 transition-all duration-300">
+            <i class="fas fa-cog w-4 h-4 group-hover:text-amber-400 transition-colors duration-300"></i>
+          </div>
+          <span>Settings</span>
+        </a>
+
+        <div class="px-2 py-1 text-xs text-gray-500 uppercase tracking-wider mt-3">Monitoring</div>
+        <a href="/admin/logs" data-nav="admin-logs" class="nav-link flex items-center space-x-3 p-3 rounded-xl text-gray-300 hover:text-white transition-all duration-300 group relative overflow-hidden">
+          <div class="data-flow absolute inset-0 opacity-0 group-hover:opacity-100"></div>
+          <div class="w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center group-hover:bg-cyan-500/20 transition-all duration-300">
+            <i class="fas fa-list-alt w-4 h-4 group-hover:text-cyan-400 transition-colors duration-300"></i>
+          </div>
+          <span>Audit Logs</span>
+          <span class="ml-auto bg-red-500/10 text-red-400 text-xs px-2 py-0.5 rounded-lg">New</span>
+        </a>
+
+      <!-- Back to User Panel -->
+      <div class="p-4 border-t border-[#1A1A1A] relative">
+        <div class="flex justify-between items-center mb-4">
+          <div class="flex items-center space-x-2">
+            <span class="text-xs text-gray-500">Admin Panel v1.1</span>
+          </div>
+          <div class="h-2 w-2 rounded-full bg-red-500 animate-pulse"></div>
         </div>
-
-        <!-- Back to User Panel -->
-        <div class="p-4 border-t border-[#1A1A1A]">
-            <a href="/dashboard" class="flex items-center space-x-3 p-3 rounded-xl text-blue-400 hover:text-blue-300 hover:bg-blue-500/10 transition-all duration-300 group">
-                <i class="fas fa-arrow-left w-5 h-5 group-hover:-translate-x-1 transition-transform duration-300"></i>
-                <span>Back to User Panel</span>
-            </a>
-        </div>
+        <a href="/dashboard" class="flex items-center space-x-3 p-3 rounded-xl text-blue-400 hover:text-blue-300 hover:bg-blue-500/10 transition-all duration-300 group">
+          <div class="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500/20 transition-all duration-300">
+            <i class="fas fa-arrow-left w-4 h-4 group-hover:-translate-x-1 transition-transform duration-300"></i>
+          </div>
+          <span>Return to User Panel</span>
+        </a>
+      </div>
     </div>
-</nav> 
+  </nav>
+
+  <!-- Backdrop when menu is open on mobile -->
+  <div id="sidebar-backdrop" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 lg:hidden opacity-0 pointer-events-none transition-opacity duration-300"></div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const sidebar = document.getElementById('admin-sidebar');
+      const mobileToggle = document.getElementById('mobile-toggle');
+      const backdrop = document.getElementById('sidebar-backdrop');
+      const navLinks = document.querySelectorAll('.nav-link');
+      const navIndicator = document.getElementById('nav-indicator');
+      
+      // Get current path to highlight active nav item
+      const currentPath = window.location.pathname;
+      
+      // Mobile menu toggle
+      mobileToggle.addEventListener('click', function() {
+        sidebar.classList.toggle('-translate-x-full');
+        backdrop.classList.toggle('opacity-0');
+        backdrop.classList.toggle('pointer-events-none');
+      });
+      
+      // Close menu when backdrop is clicked
+      backdrop.addEventListener('click', function() {
+        sidebar.classList.add('-translate-x-full');
+        backdrop.classList.add('opacity-0');
+        backdrop.classList.add('pointer-events-none');
+      });
+
+      // Highlight active navigation and animate indicator
+      navLinks.forEach(link => {
+        const linkPath = link.getAttribute('href');
+        if (currentPath === linkPath) {
+          link.classList.add('text-white');
+          link.classList.add('bg-[#1A1A1A]');
+          setTimeout(() => {
+            const linkRect = link.getBoundingClientRect();
+            const containerRect = link.parentElement.getBoundingClientRect();
+            const top = link.offsetTop;
+            navIndicator.style.transform = `translateY(${top}px)`;
+            navIndicator.style.opacity = '1';
+          }, 100);
+        }
+        
+        // Hover effect for indicator
+        link.addEventListener('mouseenter', function() {
+          const top = this.offsetTop;
+          navIndicator.style.transform = `translateY(${top}px)`;
+          navIndicator.style.opacity = '1';
+        });
+        
+        link.addEventListener('mouseleave', function() {
+          const activeLink = document.querySelector('.nav-link.text-white');
+          if (activeLink) {
+            const top = activeLink.offsetTop;
+            navIndicator.style.transform = `translateY(${top}px)`;
+          } else {
+            navIndicator.style.opacity = '0';
+          }
+        });
+      });
+      
+      // Initial load animation for menu items
+      const navContainer = document.getElementById('nav-container');
+      const navItems = navContainer.querySelectorAll('a');
+      navItems.forEach((item, index) => {
+        item.style.opacity = '0';
+        item.style.transform = 'translateX(-10px)';
+        setTimeout(() => {
+          item.style.transition = 'all 0.3s ease';
+          item.style.opacity = '1';
+          item.style.transform = 'translateX(0)';
+        }, 100 + (index * 50));
+      });
+    });
+  </script>
+</body>
+</html>

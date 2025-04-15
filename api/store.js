@@ -11,8 +11,61 @@ module.exports.load = async function (app, db) {
     let newsettings = await enabledCheck(req, res);
     if (!newsettings) return;
 
-    const { type, amount } = req.query;
-    if (!type || !amount) return res.send("Missing type or amount");
+    const { type, amount, id } = req.query;
+    if (!type) return res.send("Missing type");
+
+    // Handle bundle purchases
+    if (type === "bundle") {
+      if (!id) return res.send("Missing bundle ID");
+      
+      const bundle = newsettings.api.client.coins.store.bundles[id];
+      if (!bundle) return res.send("Invalid bundle ID");
+
+      const theme = indexjs.get(req);
+      const failedCallbackPath = theme.settings.redirect.failedpurchasebundle || "/";
+
+      const userCoins = (await db.get(`coins-${req.session.userinfo.id}`)) || 0;
+      if (userCoins < bundle.cost) {
+        return res.redirect(`${failedCallbackPath}?err=CANNOTAFFORD`);
+      }
+
+      // Update user coins
+      const newUserCoins = userCoins - bundle.cost;
+      if (newUserCoins === 0) {
+        await db.delete(`coins-${req.session.userinfo.id}`);
+      } else {
+        await db.set(`coins-${req.session.userinfo.id}`, newUserCoins);
+      }
+
+      // Update user resources
+      let extra = (await db.get(`extra-${req.session.userinfo.id}`)) || {
+        ram: 0,
+        disk: 0,
+        cpu: 0,
+        servers: 0,
+      };
+
+      extra.ram += bundle.resources.ram;
+      extra.disk += bundle.resources.disk;
+      extra.cpu += bundle.resources.cpu;
+      extra.servers += bundle.resources.servers;
+
+      await db.set(`extra-${req.session.userinfo.id}`, extra);
+      adminjs.suspend(req.session.userinfo.id);
+
+      log(
+        `Bundle Purchased`,
+        `${req.session.userinfo.username}#${req.session.userinfo.discriminator} bought the ${bundle.name} bundle for \`${bundle.cost}\` coins.`
+      );
+
+      res.redirect(
+        (theme.settings.redirect.purchasebundle || "/") + "?err=none"
+      );
+      return;
+    }
+
+    // Handle individual resource purchases
+    if (!amount) return res.send("Missing amount");
 
     const validTypes = ["ram", "disk", "cpu", "servers"];
     if (!validTypes.includes(type)) return res.send("Invalid type");

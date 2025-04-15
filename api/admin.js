@@ -837,6 +837,214 @@ module.exports.load = async function (app, db) {
     });
   });
 
+  // Get user by Discord ID
+  app.get("/api/admin/users", async (req, res) => {
+    if (!req.session.pterodactyl || !req.session.pterodactyl.root_admin) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+
+    const discordId = req.query.discordId;
+    if (!discordId) {
+      return res.status(400).json({ error: "Discord ID is required" });
+    }
+
+    try {
+      const user = await db.get("discord-" + discordId);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      const userData = await db.get("users-" + user);
+      if (!userData) {
+        return res.status(404).json({ error: "User data not found" });
+      }
+
+      res.json([{
+        id: user,
+        discordId: discordId,
+        username: userData.username,
+        avatar: userData.avatar,
+        ram: userData.ram || 0,
+        cpu: userData.cpu || 0,
+        disk: userData.disk || 0,
+        servers: userData.servers || 0,
+        coins: (await db.get("coins-" + user)) || 0
+      }]);
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  // Update user resources
+  app.post("/api/admin/users/:userId/resources", async (req, res) => {
+    if (!req.session.pterodactyl || !req.session.pterodactyl.root_admin) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+
+    const userId = req.params.userId;
+    const { ram, cpu, disk, servers, coins } = req.body;
+
+    if (!userId || !ram || !cpu || !disk || !servers || coins === undefined) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    try {
+      const userData = await db.get("users-" + userId);
+      if (!userData) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      // Update user resources
+      userData.ram = parseInt(ram);
+      userData.cpu = parseInt(cpu);
+      userData.disk = parseInt(disk);
+      userData.servers = parseInt(servers);
+      await db.set("users-" + userId, userData);
+
+      // Update coins separately
+      await db.set("coins-" + userId, parseInt(coins));
+
+      log(
+        `update resources`,
+        `${req.session.userinfo.username}#${req.session.userinfo.discriminator} updated resources for user ${userId}: RAM=${ram}, CPU=${cpu}, Disk=${disk}, Servers=${servers}, Coins=${coins}`
+      );
+
+      res.json({ success: true, message: "Resources updated successfully" });
+    } catch (error) {
+      console.error("Error updating resources:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  // Resources page route
+  app.get("/admin/resources", async (req, res) => {
+    let theme = indexjs.get(req);
+
+    if (!req.session.pterodactyl) return four0four(req, res, theme);
+
+    let cacheaccount = await fetch(
+      settings.pterodactyl.domain +
+        "/api/application/users/" +
+        (await db.get("users-" + req.session.userinfo.id)) +
+        "?include=servers",
+      {
+        method: "get",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${settings.pterodactyl.key}`,
+        },
+      }
+    );
+    if ((await cacheaccount.statusText) == "Not Found")
+      return four0four(req, res, theme);
+    let cacheaccountinfo = JSON.parse(await cacheaccount.text());
+
+    req.session.pterodactyl = cacheaccountinfo.attributes;
+    if (cacheaccountinfo.attributes.root_admin !== true)
+      return four0four(req, res, theme);
+
+    let renderData = {
+      req: req,
+      settings: settings,
+      userinfo: req.session.userinfo,
+      pterodactyl: req.session.pterodactyl,
+      extra: {},
+      db: db
+    };
+
+    try {
+      res.render("admin/resources", renderData);
+    } catch (error) {
+      console.error("Error rendering resources page:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  });
+
+  app.get("/api/admin/users/all", async (req, res) => {
+    if (!req.session.pterodactyl || !req.session.pterodactyl.root_admin) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+
+    try {
+      console.log("Fetching users from Pterodactyl...");
+      const response = await fetch(
+        `${settings.pterodactyl.domain}/api/application/users?include=servers`,
+        {
+          method: "get",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${settings.pterodactyl.key}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        console.error("Pterodactyl API error:", await response.text());
+        throw new Error("Failed to fetch users from Pterodactyl");
+      }
+
+      const data = await response.json();
+      console.log(`Found ${data.data.length} users in Pterodactyl`);
+      
+      // Get all users from our database
+      console.log("Fetching users from database...");
+      const dbUsers = await db.get("users") || [];
+      console.log(`Found ${dbUsers.length} users in database`);
+
+      // Transform the data to include Discord IDs and coins
+      const users = await Promise.all(data.data.map(async (user) => {
+        try {
+          const pteroId = user.attributes.id;
+          const discordId = user.attributes.external_id;
+          
+          // Get user's resources from our database
+          const userData = await db.get("users-" + pteroId) || {
+            ram: 0,
+            cpu: 0,
+            disk: 0,
+            servers: 0
+          };
+          
+          // Get user's coins
+          const coins = await db.get("coins-" + pteroId) || 0;
+
+          // Get user's extra resources if they exist
+          const extra = await db.get("extra-" + pteroId) || {
+            ram: 0,
+            cpu: 0,
+            disk: 0,
+            servers: 0
+          };
+
+          return {
+            id: pteroId,
+            discordId: discordId,
+            username: user.attributes.username,
+            avatar: user.attributes.avatar,
+            ram: (userData.ram || 0) + (extra.ram || 0),
+            cpu: (userData.cpu || 0) + (extra.cpu || 0),
+            disk: (userData.disk || 0) + (extra.disk || 0),
+            servers: (userData.servers || 0) + (extra.servers || 0),
+            coins: coins
+          };
+        } catch (error) {
+          console.error(`Error processing user ${user.attributes.id}:`, error);
+          return null;
+        }
+      }));
+
+      // Filter out any null entries from failed processing
+      const validUsers = users.filter(user => user !== null);
+      console.log(`Successfully processed ${validUsers.length} users`);
+
+      res.json(validUsers);
+    } catch (error) {
+      console.error("Error in /api/admin/users/all:", error);
+      res.status(500).json({ error: "Internal server error", details: error.message });
+    }
+  });
+
   async function four0four(req, res, theme) {
     ejs.renderFile(
       `./views/${theme.settings.notfound}`,
