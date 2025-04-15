@@ -40,6 +40,8 @@ pids/
 
 # Optional npm cache directory
 .npm
+.bun
+bun.lock
 
 # Optional eslint cache
 .eslintcache

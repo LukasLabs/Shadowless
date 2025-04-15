@@ -10,85 +10,134 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
     <style>
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
-        .animate-fade-in {
-            animation: fadeIn 0.3s ease-out forwards;
+        
+        body {
+            background-color: #0b0b0b;
+            color: #f5f5f5;
         }
-        .gradient-text {
-            background: linear-gradient(45deg, #3B82F6, #8B5CF6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        
+        .purple-accent {
+            color: #8b5cf6;
+        }
+        
+        .btn-purple {
+            background-color: #8b5cf6;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-purple:hover {
+            background-color: #7c3aed;
+        }
+        
+        .card {
+            background-color: #111111;
+            border: 1px solid #222222;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            border-color: #7c3aed;
+        }
+        
+        .subtle-shadow {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         }
     </style>
 </head>
-<body class="bg-[#0F0F0F] text-white min-h-screen flex flex-col">
-    <!-- Main Content -->
-    <main class="p-8 w-full flex-grow">
+<body class="min-h-screen">
+    <main class="max-w-4xl mx-auto px-4 py-16 md:py-24">
         <!-- Hero Section -->
-        <div class="relative rounded-2xl overflow-hidden mb-8 animate-fade-in">
-            <div class="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20 backdrop-blur-sm"></div>
-            <div class="relative p-12 text-center">
-                <h1 class="text-5xl font-bold mb-4 gradient-text">Welcome to <%= settings.name %></h1>
-                <p class="text-xl text-gray-300 mb-8">Your free Minecraft server hosting solution</p>
-                <div class="flex justify-center space-x-4">
-                    <a href="/login" class="px-8 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold transition-all duration-300 shadow-lg hover:shadow-blue-500/20">
-                        Get Started
-                    </a>
+        <section class="mb-24 text-center">
+            <h1 class="text-5xl md:text-7xl font-bold mb-6 text-white tracking-tight">
+                Welcome to <span class="purple-accent"><%= settings.name %></span>
+            </h1>
+            <p class="text-xl text-gray-400 mb-10 max-w-2xl mx-auto">
+                Next-generation Minecraft server hosting with unparalleled performance
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="/login" class="btn-purple px-8 py-4 rounded-md text-white font-medium">
+                    Get Started
+                </a>
+                <a href="#features" class="px-8 py-4 rounded-md text-gray-300 border border-gray-800 hover:border-purple-500 transition-colors duration-300">
+                    Explore Features
+                </a>
+            </div>
+        </section>
+        
+        <!-- Features Section -->
+        <section id="features" class="mb-24">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="card rounded-lg p-8">
+                    <div class="w-12 h-12 rounded-lg flex items-center justify-center mb-6 bg-purple-900/10">
+                        <i class="fas fa-bolt text-purple-500"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3 text-white">Lightning Fast</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Ultra-low latency and superior performance with our optimized infrastructure.
+                    </p>
+                </div>
+                
+                <div class="card rounded-lg p-8">
+                    <div class="w-12 h-12 rounded-lg flex items-center justify-center mb-6 bg-purple-900/10">
+                        <i class="fas fa-shield-alt text-purple-500"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3 text-white">Enterprise Security</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Advanced DDoS protection and automated backups for maximum security.
+                    </p>
+                </div>
+                
+                <div class="card rounded-lg p-8">
+                    <div class="w-12 h-12 rounded-lg flex items-center justify-center mb-6 bg-purple-900/10">
+                        <i class="fas fa-headset text-purple-500"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3 text-white">24/7 Expert Support</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Our dedicated team is always ready to help with any questions or issues.
+                    </p>
                 </div>
             </div>
-        </div>
-
-        <!-- Features Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-[#1A1A1A] rounded-xl p-6 hover:bg-[#242424] transition-all duration-300 animate-fade-in">
-                <div class="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center mb-4">
-                    <i class="fas fa-bolt text-blue-500 text-xl"></i>
-                </div>
-                <h3 class="text-xl font-semibold mb-2">Lightning Fast</h3>
-                <p class="text-gray-400">Powered by high-performance hardware for the best gaming experience.</p>
-            </div>
-
-            <div class="bg-[#1A1A1A] rounded-xl p-6 hover:bg-[#242424] transition-all duration-300 animate-fade-in">
-                <div class="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center mb-4">
-                    <i class="fas fa-shield-alt text-purple-500 text-xl"></i>
-                </div>
-                <h3 class="text-xl font-semibold mb-2">Secure & Reliable</h3>
-                <p class="text-gray-400">Enterprise-grade security and 99.9% uptime guarantee.</p>
-            </div>
-
-            <div class="bg-[#1A1A1A] rounded-xl p-6 hover:bg-[#242424] transition-all duration-300 animate-fade-in">
-                <div class="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center mb-4">
-                    <i class="fas fa-headset text-green-500 text-xl"></i>
-                </div>
-                <h3 class="text-xl font-semibold mb-2">24/7 Support</h3>
-                <p class="text-gray-400">Our team is always here to help you with any issues.</p>
-            </div>
-        </div>
-
+        </section>
+        
         <!-- Stats Section -->
-        <div class="bg-[#1A1A1A] rounded-xl p-8 mb-8 animate-fade-in">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <section class="card rounded-lg p-8 mb-24 subtle-shadow">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                 <div class="text-center">
-                    <div class="text-4xl font-bold text-blue-500 mb-2">99.9%</div>
-                    <div class="text-gray-400">Uptime</div>
+                    <div class="text-3xl font-bold text-white mb-1">99.9%</div>
+                    <div class="text-gray-500 text-sm">Uptime</div>
                 </div>
                 <div class="text-center">
-                    <div class="text-4xl font-bold text-purple-500 mb-2">24/7</div>
-                    <div class="text-gray-400">Support</div>
+                    <div class="text-3xl font-bold text-white mb-1">24/7</div>
+                    <div class="text-gray-500 text-sm">Support</div>
                 </div>
                 <div class="text-center">
-                    <div class="text-4xl font-bold text-green-500 mb-2" id="totalUsers">10+</div>
-                    <div class="text-gray-400">Happy Users</div>
+                    <div class="text-3xl font-bold text-white mb-1">10K+</div>
+                    <div class="text-gray-500 text-sm">Players</div>
                 </div>
                 <div class="text-center">
-                    <div class="text-4xl font-bold text-yellow-500 mb-2" id="totalLocations">3+</div>
-                    <div class="text-gray-400">Locations</div>
+                    <div class="text-3xl font-bold text-white mb-1">10+</div>
+                    <div class="text-gray-500 text-sm">Locations</div>
                 </div>
             </div>
-        </div>
+        </section>
+        
+        <!-- CTA Section -->
+        <section class="card rounded-lg p-8 subtle-shadow">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                <div>
+                    <h3 class="text-2xl font-semibold mb-2 text-white">Ready to start?</h3>
+                    <p class="text-gray-400">Create your Minecraft server in minutes.</p>
+                </div>
+                <a href="/login" class="btn-purple px-8 py-4 rounded-md text-white font-medium whitespace-nowrap">
+                    Create Server
+                </a>
+            </div>
+        </section>
     </main>
 
     <!-- Footer -->
