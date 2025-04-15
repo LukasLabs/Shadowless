@@ -99,7 +99,7 @@ module.exports.load = async function (app, db) {
     new CronJob(`* * * * *`, () => {
     if (settings.renewals.status) {
         if (settings.renewals.logs){
-        console.log(chalk.cyan("[Xalora]") + chalk.white(" Checking renewal servers... "));
+        console.log(chalk.cyan("[Shadowless]") + chalk.white(" Checking renewal servers... "));
         }
         getAllServers().then(async servers => {
             for (const server of servers) {
@@ -160,7 +160,7 @@ module.exports.load = async function (app, db) {
             console.error("Error during server renewal check:", error);
         });
         if (settings.renewals.logs){
-        console.log(chalk.cyan("[Xalora]") + chalk.white("The renewal check-over is now complete."));
+        console.log(chalk.cyan("[Shadowless]") + chalk.white("The renewal check-over is now complete."));
         }
     }
 }, null, true, settings.timezone).start();

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Servers - <%= settings.name %> Admin</title>
+    <link rel="icon" type="image/png" href="<%= settings.logo %>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
+</head>
+<body class="bg-[#0F0F0F] text-white min-h-screen">
+    <div class="flex">
+        <!-- Admin Navigation -->
+        <%- include('../components/admin-navigation') %>
+
+        <!-- Main Content -->
+        <main class="flex-1 ml-72 p-8">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold">Servers</h1>
+                    <p class="text-gray-400">Manage all servers</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <input type="text" id="searchInput" placeholder="Search servers..." class="bg-[#1A1A1A] rounded-xl px-4 py-2 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                    <button onclick="createServer()" class="px-4 py-2 rounded-xl bg-blue-500 hover:bg-blue-600 text-white transition-all duration-300">
+                        <i class="fas fa-plus mr-2"></i> Create Server
+                    </button>
+                </div>
+            </div>
+
+            <!-- Servers Table -->
+            <div class="bg-[#1A1A1A] rounded-xl overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="bg-[#242424] text-left">
+                                <th class="p-4">Server</th>
+                                <th class="p-4">Owner</th>
+                                <th class="p-4">Resources</th>
+                                <th class="p-4">Status</th>
+                                <th class="p-4">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="serversTableBody">
+                            <!-- Servers will be loaded here via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center">
+        <div class="bg-[#1A1A1A] rounded-xl p-6 w-full max-w-md">
+            <h2 class="text-xl font-bold mb-4">Delete Server</h2>
+            <p class="text-gray-400 mb-6">Are you sure you want to delete this server? This action cannot be undone.</p>
+            <div class="flex justify-end space-x-3">
+                <button onclick="closeDeleteModal()" class="px-4 py-2 rounded-lg bg-[#242424] hover:bg-[#2A2A2A]">Cancel</button>
+                <button id="confirmDelete" class="px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load servers on page load
+        document.addEventListener('DOMContentLoaded', loadServers);
+
+        async function loadServers() {
+            try {
+                const response = await fetch('/admin/api/servers');
+                const data = await response.json();
+                renderServers(data.data);
+            } catch (error) {
+                console.error('Error loading servers:', error);
+                showNotification('Failed to load servers', 'error');
+            }
+        }
+
+        function renderServers(servers) {
+            const tbody = document.getElementById('serversTableBody');
+            tbody.innerHTML = servers.map(server => `
+                <tr class="border-t border-[#242424] hover:bg-[#242424]">
+                    <td class="p-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
+                                <i class="fas fa-server text-purple-500"></i>
+                            </div>
+                            <div>
+                                <div class="font-medium">${server.attributes.name}</div>
+                                <div class="text-sm text-gray-400">${server.attributes.identifier}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="p-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="font-medium">${server.attributes.user.username}</div>
+                        </div>
+                    </td>
+                    <td class="p-4">
+                        <div class="space-y-1">
+                            <div class="text-sm">RAM: ${server.attributes.limits.memory} MB</div>
+                            <div class="text-sm">CPU: ${server.attributes.limits.cpu}%</div>
+                            <div class="text-sm">Disk: ${server.attributes.limits.disk} MB</div>
+                        </div>
+                    </td>
+                    <td class="p-4">
+                        ${server.attributes.suspended ? 
+                            '<span class="px-2 py-1 rounded-lg bg-red-500/10 text-red-500">Suspended</span>' :
+                            '<span class="px-2 py-1 rounded-lg bg-green-500/10 text-green-500">Active</span>'
+                        }
+                    </td>
+                    <td class="p-4">
+                        <div class="flex items-center space-x-2">
+                            ${server.attributes.suspended ?
+                                `<button onclick="unsuspendServer('${server.attributes.id}')" class="p-2 rounded-lg bg-green-500/10 text-green-500 hover:bg-green-500/20">
+                                    <i class="fas fa-play"></i>
+                                </button>` :
+                                `<button onclick="suspendServer('${server.attributes.id}')" class="p-2 rounded-lg bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20">
+                                    <i class="fas fa-pause"></i>
+                                </button>`
+                            }
+                            <button onclick="openDeleteModal('${server.attributes.id}')" class="p-2 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500/20">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('#serversTableBody tr');
+            
+            rows.forEach(row => {
+                const serverName = row.querySelector('.font-medium').textContent.toLowerCase();
+                const serverId = row.querySelector('.text-gray-400').textContent.toLowerCase();
+                const owner = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                
+                if (serverName.includes(searchTerm) || serverId.includes(searchTerm) || owner.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+
+        // Server actions
+        async function suspendServer(id) {
+            try {
+                const response = await fetch(`/admin/api/servers/${id}/suspend`, {
+                    method: 'POST'
+                });
+
+                if (response.ok) {
+                    showNotification('Server suspended successfully', 'success');
+                    loadServers();
+                } else {
+                    throw new Error('Failed to suspend server');
+                }
+            } catch (error) {
+                console.error('Error suspending server:', error);
+                showNotification('Failed to suspend server', 'error');
+            }
+        }
+
+        async function unsuspendServer(id) {
+            try {
+                const response = await fetch(`/admin/api/servers/${id}/unsuspend`, {
+                    method: 'POST'
+                });
+
+                if (response.ok) {
+                    showNotification('Server unsuspended successfully', 'success');
+                    loadServers();
+                } else {
+                    throw new Error('Failed to unsuspend server');
+                }
+            } catch (error) {
+                console.error('Error unsuspending server:', error);
+                showNotification('Failed to unsuspend server', 'error');
+            }
+        }
+
+        // Delete modal functions
+        let serverToDelete = null;
+
+        function openDeleteModal(id) {
+            serverToDelete = id;
+            document.getElementById('deleteModal').classList.remove('hidden');
+        }
+
+        function closeDeleteModal() {
+            serverToDelete = null;
+            document.getElementById('deleteModal').classList.add('hidden');
+        }
+
+        document.getElementById('confirmDelete').addEventListener('click', async () => {
+            if (!serverToDelete) return;
+
+            try {
+                const response = await fetch(`/admin/api/servers/${serverToDelete}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    showNotification('Server deleted successfully', 'success');
+                    loadServers();
+                } else {
+                    throw new Error('Failed to delete server');
+                }
+            } catch (error) {
+                console.error('Error deleting server:', error);
+                showNotification('Failed to delete server', 'error');
+            }
+
+            closeDeleteModal();
+        });
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `fixed bottom-4 right-4 px-6 py-3 rounded-lg text-white ${
+                type === 'success' ? 'bg-green-500' : 'bg-red-500'
+            } animate-fade-in`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+
+        function createServer() {
+            window.location.href = '/admin/servers/create';
+        }
+    </script>
+</body>
+</html> 

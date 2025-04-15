@@ -1,20 +1,72 @@
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <title><%= settings.name %></title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - <%= settings.name %></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+    </style>
 </head>
-<body class="text-white bg-[171717]">
-  <div class="flex">
-      <!-- Sidebar -->
-      <%- include('../components/navigation') %>
-      <!-- Main Content -->
-      <main class="container flex-grow px-4 py-8 mx-auto">
-        <div class="w-full h-screen p-10 text-white" bis_skin_checked="1"><h1 class="mb-2 text-3xl font-bold">Control panel credentials</h1>   <p class="mt-2 mb-10 text-gray-400">On this page you can find credentials you can use to access your hosted services.</p> <div class="flex flex-col w-full gap-5" bis_skin_checked="1"><div class="flex flex-col gap-5 p-5 rounded-2xl bg-[262626]" bis_skin_checked="1"><div class="flex items-center gap-2" bis_skin_checked="1"><img src="https://deploy.creepercloud.io/images/logos/pterodactyl.svg" class="w-8 h-8" alt=""> <p class="text-xl font-bold">Manage your game servers</p></div> <p>Use the following credentials to login to Pterodactyl™.</p> <div class="flex flex-col" bis_skin_checked="1"><div class="flex items-center gap-2" bis_skin_checked="1"><p class="font-bold text-md">Email:</p> <code class="text-md"><%= pterodactyl.email %></code></div> <div class="flex items-center gap-2" bis_skin_checked="1"><p class="font-bold text-md">Password:</p> <p>Forgot it or never generated it? Reset it!</p></div></div> <div class="flex items-center gap-3" bis_skin_checked="1"><button class="flex flex-row items-center w-full gap-1 p-2 transition bg-red-500 rounded-md decoration sm:w-auto hover:bg-red-400"><i class="text-lg"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"></rect><path d="M225,80.4,183.6,39a24,24,0,0,0-33.94,0L31,157.66a24,24,0,0,0,0,33.94l30.06,30.06A8,8,0,0,0,66.74,224H216a8,8,0,0,0,0-16h-84.7L225,114.34A24,24,0,0,0,225,80.4ZM108.68,208H70.05L42.33,180.28a8,8,0,0,1,0-11.31L96,115.31,148.69,168Zm105-105L160,156.69,107.31,104,161,50.34a8,8,0,0,1,11.32,0l41.38,41.38a8,8,0,0,1,0,11.31Z"></path></svg></i> <p class="text-md"><a href="/security">Reset password</a></p></button> <a class="flex flex-row items-center w-full gap-1 p-2 transition bg-blue-500 rounded-md decoration sm:w-auto hover:bg-blue-400" href="<%= settings.pterodactyl.domain %>" target="_blank" rel="noreferrer"><i class="text-lg"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"></rect><path d="M200,64V168a8,8,0,0,1-16,0V83.31L69.66,197.66a8,8,0,0,1-11.32-11.32L172.69,72H88a8,8,0,0,1,0-16H192A8,8,0,0,1,200,64Z"></path></svg></i> <p class="text-md">Open game panel</p></a></div></div> </div> <div class="mt-5" bis_skin_checked="1"><div class="p-5" bis_skin_checked="1"> </div> <div class="flex flex-col gap-1 mb-2" bis_skin_checked="1"><div class="flex flex-row flex-wrap items-center justify-center w-full gap-1 text-sm text-white/50" bis_skin_checked="1"><p class="text-center">
-          <%- include('../components/footer') %>
-            
-    </main>
-    
+<body class="bg-[#0F0F0F] text-white min-h-screen">
+    <div class="flex">
+        <!-- Sidebar -->
+        <%- include('../components/navigation') %>
+        
+        <!-- Main Content -->
+        <main class="flex-1 ml-72 p-8">
+            <!-- Header -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold mb-2">Control Panel Credentials</h1>
+                <p class="text-gray-400">On this page you can find credentials you can use to access your hosted services.</p>
+            </div>
+
+            <!-- Pterodactyl Panel Card -->
+            <div class="bg-[#1A1A1A] rounded-xl p-6 mb-6 animate-fade-in">
+                <div class="flex items-center space-x-3 mb-4">
+                    <img src="https://deploy.creepercloud.io/images/logos/pterodactyl.svg" class="w-8 h-8" alt="Pterodactyl Logo">
+                    <h2 class="text-xl font-bold">Manage your game servers</h2>
+                </div>
+                
+                <p class="text-gray-400 mb-6">Use the following credentials to login to Pterodactyl™.</p>
+                
+                <div class="space-y-3 mb-6">
+                    <div class="flex items-center space-x-2">
+                        <span class="font-medium text-gray-300">Email:</span>
+                        <code class="text-gray-400"><%= pterodactyl.email %></code>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="font-medium text-gray-300">Password:</span>
+                        <span class="text-gray-400">Forgot it or never generated it? Reset it!</span>
+                    </div>
+                </div>
+
+                <div class="flex space-x-3">
+                    <a href="/security" class="flex-1 flex items-center justify-center space-x-2 py-3 rounded-xl bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold transition-all duration-300 shadow-lg hover:shadow-red-500/20">
+                        <i class="fas fa-key"></i>
+                        <span>Reset password</span>
+                    </a>
+                    <a href="<%= settings.pterodactyl.domain %>" target="_blank" rel="noreferrer" class="flex-1 flex items-center justify-center space-x-2 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold transition-all duration-300 shadow-lg hover:shadow-blue-500/20">
+                        <i class="fas fa-external-link-alt"></i>
+                        <span>Open game panel</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Additional Services Section -->
+            <div class="bg-[#1A1A1A] rounded-xl p-6 animate-fade-in">
+                <h2 class="text-xl font-bold mb-4">Additional Services</h2>
+                <p class="text-gray-400">More services will be added here in the future.</p>
+            </div>
+        </main>
+    </div>
 </body>
+</html>

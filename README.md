@@ -9,6 +9,7 @@ All features:
 - Coins (AFK Page Earning, Linkvertise earning)
 - Renewal (Require coins for renewal)
 - Servers (create, view, and edit servers)
+- Login Queue (prevent overload)
 - User System (auth, regen password, etc)
 - Store (buy resources with coins)
 - Dashboard (view resources)
@@ -48,7 +49,7 @@ Warning: You need Pterodactyl already set up on a domain for this method to work
 - `apt-get update && apt-get install libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev build-essential`
 - `cd /var/www/ShadowlessDash && npm i`
 
-After configuring settings.json, to start the server, use `node app.js`</br>
+After configuring settings.json, to start the server, use `node index.js`</br>
 To run in the background, use PM2 (see PM2 section)</br>
 
 ## 2. Setting up webserver
@@ -93,17 +94,17 @@ Installing [pm2](https://github.com/Unitech/pm2):
 
 Starting the Dashboard in Background:
 - Change directory to your ShadowlessDash folder Using `cd` command, Example: `cd /var/www/ShadowlessDash` 
-- To run Shadowless, use `pm2 start index.js --name "ShadowlessDash"`
+- To run xalora, use `pm2 start index.js --name "ShadowlessDash"`
 - To view logs, run `pm2 logs ShadowlessDash`
 
 Making the dashboard runs on startup:
 - Make sure your dashboard is running in the background with the help of [pm2](https://github.com/Unitech/pm2)
-- You can check if Shadowless is running in background with `pm2 list`
-- Once you confirmed that Shadowless is running in background, you can create a startup script by running `pm2 startup` and `pm2 save`
+- You can check if Xalora is running in background with `pm2 list`
+- Once you confirmed that Xalora is running in background, you can create a startup script by running `pm2 startup` and `pm2 save`
 - Note: Supported init systems are `systemd`, `upstart`, `launchd`, `rc.d`
-- To stop your Shadowless from running in the background, use `pm2 unstartup`
+- To stop your Xalora from running in the background, use `pm2 unstartup`
 
-To stop a currently running Shadowless instance, use `pm2 stop ShadowlessDash`
+To stop a currently running Xalora instance, use `pm2 stop Xalora`
 
 # Credits
 <strong>1.1</strong> Our backend is heavily inspired by Heliactyl, and we extend our gratitude to their team for their exceptional work.

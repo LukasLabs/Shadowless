@@ -1,82 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <title><%= settings.name %></title>
-  <link rel="icon" type="image/x-icon" href="../assets/favicon.png">
-  <link rel="stylesheet" href="../assets/tailwind.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="https://unpkg.com/@popperjs/core@2.10.1/dist/umd/popper.min.js"></script>
-  <!-- Inter font -->
-  <link rel="preconnect" href="https://fonts.gstatic.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - <%= settings.name %> Admin</title>
+    <link rel="icon" type="image/png" href="<%= settings.logo %>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+    </style>
 </head>
+<body class="bg-[#0F0F0F] text-white min-h-screen">
+    <div class="flex">
+        <!-- Admin Navigation -->
+        <%- include('../components/admin-navigation') %>
 
-<body class="min-h-full bg-stone-950" style="font-family: 'Inter', sans-serif;">
-  <div>
-    <%- include('../components/navigation') %>
-    <div class="md:pl-64">
-      <main class="min-h-screen">
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-          <div class="px-4 py-8 sm:px-0">
-            <div class="rounded-lg bg-stone-900 p-6 shadow">
-              <div class="px-4 sm:px-0">
-                <h3 class="text-base font-semibold leading-7 text-stone-200">Admin Settings</h3>
-                <p class="mt-1 text-sm leading-6 text-stone-400">Configure system-wide settings and preferences.</p>
-              </div>
-              <div class="mt-6 border-t border-stone-800">
-                <form action="/admin/settings" method="POST">
-                  <!-- General Settings -->
-                  <div class="px-4 py-6 sm:px-0">
-                    <h4 class="text-lg font-medium text-stone-200 mb-4">General Settings</h4>
-                    <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                      <div class="sm:col-span-4">
-                        <label for="siteName" class="block text-sm font-medium leading-6 text-stone-300">Site Name</label>
-                        <div class="mt-2">
-                          <input type="text" name="siteName" id="siteName" value="<%= settings.siteName %>" class="block w-full rounded-md border-0 py-1.5 text-stone-200 bg-stone-800 shadow-sm ring-1 ring-inset ring-stone-700 placeholder:text-stone-400 focus:ring-2 focus:ring-inset focus:ring-stone-600 sm:text-sm sm:leading-6">
-                        </div>
-                      </div>
-
-                      <div class="sm:col-span-4">
-                        <label for="domain" class="block text-sm font-medium leading-6 text-stone-300">Domain</label>
-                        <div class="mt-2">
-                          <input type="text" name="domain" id="domain" value="<%= settings.domain %>" class="block w-full rounded-md border-0 py-1.5 text-stone-200 bg-stone-800 shadow-sm ring-1 ring-inset ring-stone-700 placeholder:text-stone-400 focus:ring-2 focus:ring-inset focus:ring-stone-600 sm:text-sm sm:leading-6">
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- API Settings -->
-                  <div class="px-4 py-6 sm:px-0 border-t border-stone-800">
-                    <h4 class="text-lg font-medium text-stone-200 mb-4">API Configuration</h4>
-                    <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                      <div class="sm:col-span-4">
-                        <label for="apiKey" class="block text-sm font-medium leading-6 text-stone-300">API Key</label>
-                        <div class="mt-2">
-                          <input type="password" name="apiKey" id="apiKey" value="<%= settings.apiKey %>" class="block w-full rounded-md border-0 py-1.5 text-stone-200 bg-stone-800 shadow-sm ring-1 ring-inset ring-stone-700 placeholder:text-stone-400 focus:ring-2 focus:ring-inset focus:ring-stone-600 sm:text-sm sm:leading-6">
-                        </div>
-                      </div>
-
-                      <div class="sm:col-span-4">
-                        <label for="apiUrl" class="block text-sm font-medium leading-6 text-stone-300">API URL</label>
-                        <div class="mt-2">
-                          <input type="text" name="apiUrl" id="apiUrl" value="<%= settings.apiUrl %>" class="block w-full rounded-md border-0 py-1.5 text-stone-200 bg-stone-800 shadow-sm ring-1 ring-inset ring-stone-700 placeholder:text-stone-400 focus:ring-2 focus:ring-inset focus:ring-stone-600 sm:text-sm sm:leading-6">
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Save Button -->
-                  <div class="px-4 py-6 sm:px-0 flex justify-end">
-                    <button type="submit" class="rounded-md bg-stone-800 px-3 py-2 text-sm font-semibold text-stone-200 shadow-sm hover:bg-stone-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-600">
-                      Save Changes
-                    </button>
-                  </div>
-                </form>
-              </div>
+        <!-- Main Content -->
+        <main class="flex-1 ml-72 p-8">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold">Settings</h1>
+                    <p class="text-gray-400">Configure your dashboard settings</p>
+                </div>
             </div>
-          </div>
-        </div>
-      </main>
-      <%- include('../components/footer') %>
+
+            <!-- Settings Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- General Settings -->
+                <div class="bg-[#1A1A1A] rounded-xl p-6 animate-fade-in">
+                    <h2 class="text-xl font-semibold mb-6">General Settings</h2>
+                    <form id="generalSettingsForm" class="space-y-4">
+                        <div>
+                            <label class="block text-gray-400 mb-2">Dashboard Name</label>
+                            <input type="text" id="dashboardName" value="<%= settings.name %>" class="w-full bg-[#242424] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 mb-2">Logo URL</label>
+                            <input type="text" id="logoUrl" value="<%= settings.logo %>" class="w-full bg-[#242424] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 mb-2">Domain</label>
+                            <input type="text" id="domain" value="<%= settings.pterodactyl.domain %>" class="w-full bg-[#242424] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                        </div>
+                        <button type="submit" class="w-full px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 transition-all duration-300">
+                            Save Changes
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Resource Settings -->
+                <div class="bg-[#1A1A1A] rounded-xl p-6 animate-fade-in">
+                    <h2 class="text-xl font-semibold mb-6">Resource Settings</h2>
+                    <form id="resourceSettingsForm" class="space-y-4">
+                        <div>
+                            <label class="block text-gray-400 mb-2">Default RAM (MB)</label>
+                            <input type="number" id="defaultRam" value="<%= settings.api.client.packages.default.ram %>" class="w-full bg-[#242424] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 mb-2">Default CPU (%)</label>
+                            <input type="number" id="defaultCpu" value="<%= settings.api.client.packages.default.cpu %>" class="w-full bg-[#242424] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 mb-2">Default Disk (MB)</label>
+                            <input type="number" id="defaultDisk" value="<%= settings.api.client.packages.default.disk %>" class="w-full bg-[#242424] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 mb-2">Default Servers</label>
+                            <input type="number" id="defaultServers" value="<%= settings.api.client.packages.default.servers %>" class="w-full bg-[#242424] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                        </div>
+                        <button type="submit" class="w-full px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 transition-all duration-300">
+                            Save Changes
+                        </button>
+                    </form>
+                </div>
+
+                <!-- API Settings -->
+                <div class="bg-[#1A1A1A] rounded-xl p-6 animate-fade-in">
+                    <h2 class="text-xl font-semibold mb-6">API Settings</h2>
+                    <form id="apiSettingsForm" class="space-y-4">
+                        <div>
+                            <label class="block text-gray-400 mb-2">API Key</label>
+                            <div class="relative">
+                                <input type="password" id="apiKey" value="<%= settings.pterodactyl.key %>" class="w-full bg-[#242424] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                                <button type="button" onclick="toggleApiKey()" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 mb-2">Client API Key</label>
+                            <div class="relative">
+                                <input type="password" id="clientApiKey" value="<%= settings.pterodactyl.client %>" class="w-full bg-[#242424] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                                <button type="button" onclick="toggleClientApiKey()" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 transition-all duration-300">
+                            Save Changes
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Discord Settings -->
+                <div class="bg-[#1A1A1A] rounded-xl p-6 animate-fade-in">
+                    <h2 class="text-xl font-semibold mb-6">Discord Settings</h2>
+                    <form id="discordSettingsForm" class="space-y-4">
+                        <div>
+                            <label class="block text-gray-400 mb-2">Client ID</label>
+                            <input type="text" id="clientId" value="<%= settings.api.client.oauth2.id %>" class="w-full bg-[#242424] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 mb-2">Client Secret</label>
+                            <div class="relative">
+                                <input type="password" id="clientSecret" value="<%= settings.api.client.oauth2.secret %>" class="w-full bg-[#242424] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                                <button type="button" onclick="toggleClientSecret()" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 mb-2">Callback URL</label>
+                            <input type="text" id="callbackUrl" value="<%= settings.api.client.oauth2.link + settings.api.client.oauth2.callbackpath %>" class="w-full bg-[#242424] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                        </div>
+                        <button type="submit" class="w-full px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 transition-all duration-300">
+                            Save Changes
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </main>
     </div>
-    
-  </div>
+
+    <script>
+        // Toggle password visibility
+        function toggleApiKey() {
+            const input = document.getElementById('apiKey');
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
+        function toggleClientApiKey() {
+            const input = document.getElementById('clientApiKey');
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
+        function toggleClientSecret() {
+            const input = document.getElementById('clientSecret');
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
+        // Handle form submissions
+        document.getElementById('generalSettingsForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = {
+                name: document.getElementById('dashboardName').value,
+                logo: document.getElementById('logoUrl').value,
+                'pterodactyl.domain': document.getElementById('domain').value
+            };
+            await updateSettings(data);
+        });
+
+        document.getElementById('resourceSettingsForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = {
+                'api.client.packages.default.ram': parseInt(document.getElementById('defaultRam').value),
+                'api.client.packages.default.cpu': parseInt(document.getElementById('defaultCpu').value),
+                'api.client.packages.default.disk': parseInt(document.getElementById('defaultDisk').value),
+                'api.client.packages.default.servers': parseInt(document.getElementById('defaultServers').value)
+            };
+            await updateSettings(data);
+        });
+
+        document.getElementById('apiSettingsForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = {
+                'pterodactyl.key': document.getElementById('apiKey').value,
+                'pterodactyl.client': document.getElementById('clientApiKey').value
+            };
+            await updateSettings(data);
+        });
+
+        document.getElementById('discordSettingsForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = {
+                'api.client.oauth2.id': document.getElementById('clientId').value,
+                'api.client.oauth2.secret': document.getElementById('clientSecret').value,
+                'api.client.oauth2.link': document.getElementById('callbackUrl').value.split('/callback')[0],
+                'api.client.oauth2.callbackpath': '/callback'
+            };
+            await updateSettings(data);
+        });
+
+        async function updateSettings(data) {
+            try {
+                const response = await fetch('/admin/api/settings', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    showNotification('Settings updated successfully', 'success');
+                    // Reload the page after a short delay to show the notification
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    const error = await response.json();
+                    showNotification(error.error || 'Failed to update settings', 'error');
+                }
+            } catch (error) {
+                console.error('Error updating settings:', error);
+                showNotification('Failed to update settings', 'error');
+            }
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `fixed bottom-4 right-4 px-6 py-3 rounded-lg text-white ${
+                type === 'success' ? 'bg-green-500' : 'bg-red-500'
+            } animate-fade-in`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+    </script>
 </body>
+</html>

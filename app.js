@@ -72,7 +72,7 @@ if (cluster.isMaster) {
   console.log(chalk.gray(`Successfully forked ${numCPUs} workers.`));
   console.log("")
   console.log(`|-| [- |_ | /\\ ( ~|~ \`/ |_`);
-  console.log(`ShadowlessDash v1.2`);
+  console.log(`Shadowless v1.0.1`);
   console.log(`Application started at port: ${settings.website.port}`)
 
   cluster.on('exit', (worker, code, signal) => {
@@ -140,6 +140,10 @@ if (cluster.isMaster) {
     .forEach(file => {
       require(`./api/${file}`).load(app, db);
     });
+
+  // Mount admin routes
+  const adminRouter = require('./routes/admin');
+  app.use('/admin', adminRouter);
 
   // Handle all other routes
   app.all("*", async (req, res) => {

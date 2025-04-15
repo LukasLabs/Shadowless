@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Server - <%= settings.name %> Admin</title>
+    <link rel="icon" type="image/png" href="<%= settings.logo %>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
+</head>
+<body class="bg-[#0F0F0F] text-white min-h-screen">
+    <div class="flex">
+        <!-- Admin Navigation -->
+        <%- include('../../components/admin-navigation') %>
+
+        <!-- Main Content -->
+        <main class="flex-1 ml-72 p-8">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold">Create Server</h1>
+                    <p class="text-gray-400">Create a new server for a user</p>
+                </div>
+                <button onclick="window.location.href='/admin/servers'" class="px-4 py-2 rounded-xl bg-[#1A1A1A] hover:bg-[#242424] text-white transition-all duration-300">
+                    <i class="fas fa-arrow-left mr-2"></i> Back to Servers
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Basic Information -->
+                <div class="bg-[#1A1A1A] rounded-xl p-6">
+                    <h2 class="text-xl font-bold mb-4">Basic Information</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-2">Server Name</label>
+                            <input type="text" id="serverName" class="w-full bg-[#242424] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20" placeholder="My Server">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-2">User</label>
+                            <div class="relative">
+                                <input type="text" id="userSearch" class="w-full bg-[#242424] rounded-lg px-4 py-2 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-500/20" placeholder="Search user...">
+                                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            </div>
+                            <div id="userResults" class="hidden mt-2 bg-[#242424] rounded-lg max-h-48 overflow-y-auto"></div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-2">Server Type</label>
+                            <select id="serverType" class="w-full bg-[#242424] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                                <option value="minecraft">Minecraft</option>
+                                <option value="discord">Discord Bot</option>
+                                <option value="website">Website</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Server Resources -->
+                <div class="bg-[#1A1A1A] rounded-xl p-6">
+                    <h2 class="text-xl font-bold mb-4">Server Resources</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-2">RAM (MB)</label>
+                            <input type="number" id="ram" class="w-full bg-[#242424] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20" placeholder="1024">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-2">CPU (%)</label>
+                            <input type="number" id="cpu" class="w-full bg-[#242424] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20" placeholder="100">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-2">Disk Space (MB)</label>
+                            <input type="number" id="disk" class="w-full bg-[#242424] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20" placeholder="1024">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Server Location -->
+                <div class="bg-[#1A1A1A] rounded-xl p-6">
+                    <h2 class="text-xl font-bold mb-4">Server Location</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="locations">
+                        <!-- Locations will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Server Software -->
+                <div class="bg-[#1A1A1A] rounded-xl p-6">
+                    <h2 class="text-xl font-bold mb-4">Server Software</h2>
+                    <div class="space-y-4">
+                        <div class="relative">
+                            <input type="text" id="softwareSearch" class="w-full bg-[#242424] rounded-lg px-4 py-2 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-500/20" placeholder="Search software...">
+                            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4" id="softwareOptions">
+                            <!-- Software options will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Create Button -->
+            <div class="mt-8 flex justify-end">
+                <button onclick="createServer()" class="px-6 py-3 rounded-xl bg-blue-500 hover:bg-blue-600 text-white transition-all duration-300">
+                    <i class="fas fa-plus mr-2"></i> Create Server
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let selectedUser = null;
+        let selectedLocation = null;
+        let selectedSoftware = null;
+
+        // Load locations on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await fetch('/admin/api/locations');
+                const data = await response.json();
+                renderLocations(data.data);
+            } catch (error) {
+                console.error('Error loading locations:', error);
+                showNotification('Failed to load locations', 'error');
+            }
+        });
+
+        // User search functionality
+        document.getElementById('userSearch').addEventListener('input', async (e) => {
+            const searchTerm = e.target.value;
+            if (searchTerm.length < 3) {
+                document.getElementById('userResults').classList.add('hidden');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/admin/api/users/search?q=${searchTerm}`);
+                const data = await response.json();
+                renderUserResults(data);
+            } catch (error) {
+                console.error('Error searching users:', error);
+                showNotification('Failed to search users', 'error');
+            }
+        });
+
+        function renderUserResults(users) {
+            const container = document.getElementById('userResults');
+            container.innerHTML = users.map(user => `
+                <div class="p-3 hover:bg-[#1A1A1A] cursor-pointer flex items-center space-x-3" onclick="selectUser('${user.discordId}', '${user.username}')">
+                    <img src="${user.avatar}" class="w-8 h-8 rounded-full" alt="${user.username}">
+                    <span>${user.username}</span>
+                </div>
+            `).join('');
+            container.classList.remove('hidden');
+        }
+
+        function selectUser(discordId, username) {
+            selectedUser = discordId;
+            document.getElementById('userSearch').value = username;
+            document.getElementById('userResults').classList.add('hidden');
+        }
+
+        function renderLocations(locations) {
+            const container = document.getElementById('locations');
+            container.innerHTML = locations.map(location => `
+                <div class="bg-[#242424] rounded-lg p-4 cursor-pointer hover:bg-[#2A2A2A] transition-all duration-300" onclick="selectLocation('${location.id}')">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="font-medium">${location.name}</h3>
+                            <p class="text-sm text-gray-400">${location.description}</p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center">
+                            <i class="fas fa-server text-blue-500"></i>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectLocation(id) {
+            selectedLocation = id;
+            document.querySelectorAll('#locations > div').forEach(el => {
+                el.classList.remove('ring-2', 'ring-blue-500');
+            });
+            event.currentTarget.classList.add('ring-2', 'ring-blue-500');
+        }
+
+        // Software search functionality
+        document.getElementById('softwareSearch').addEventListener('input', async (e) => {
+            const searchTerm = e.target.value;
+            try {
+                const response = await fetch(`/admin/api/software/search?q=${searchTerm}`);
+                const data = await response.json();
+                renderSoftwareOptions(data);
+            } catch (error) {
+                console.error('Error searching software:', error);
+                showNotification('Failed to search software', 'error');
+            }
+        });
+
+        function renderSoftwareOptions(software) {
+            const container = document.getElementById('softwareOptions');
+            container.innerHTML = software.map(item => `
+                <div class="bg-[#242424] rounded-lg p-4 cursor-pointer hover:bg-[#2A2A2A] transition-all duration-300" onclick="selectSoftware('${item.id}')">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="font-medium">${item.name}</h3>
+                            <p class="text-sm text-gray-400">${item.description}</p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full bg-purple-500/10 flex items-center justify-center">
+                            <i class="fas fa-cube text-purple-500"></i>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectSoftware(id) {
+            selectedSoftware = id;
+            document.querySelectorAll('#softwareOptions > div').forEach(el => {
+                el.classList.remove('ring-2', 'ring-purple-500');
+            });
+            event.currentTarget.classList.add('ring-2', 'ring-purple-500');
+        }
+
+        async function createServer() {
+            if (!selectedUser) {
+                showNotification('Please select a user', 'error');
+                return;
+            }
+
+            if (!selectedLocation) {
+                showNotification('Please select a location', 'error');
+                return;
+            }
+
+            if (!selectedSoftware) {
+                showNotification('Please select software', 'error');
+                return;
+            }
+
+            const serverName = document.getElementById('serverName').value;
+            const ram = document.getElementById('ram').value;
+            const cpu = document.getElementById('cpu').value;
+            const disk = document.getElementById('disk').value;
+
+            if (!serverName || !ram || !cpu || !disk) {
+                showNotification('Please fill in all fields', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/admin/api/servers/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: serverName,
+                        user: selectedUser,
+                        location: selectedLocation,
+                        software: selectedSoftware,
+                        resources: {
+                            ram: parseInt(ram),
+                            cpu: parseInt(cpu),
+                            disk: parseInt(disk)
+                        }
+                    })
+                });
+
+                if (response.ok) {
+                    showNotification('Server created successfully', 'success');
+                    setTimeout(() => {
+                        window.location.href = '/admin/servers';
+                    }, 2000);
+                } else {
+                    throw new Error('Failed to create server');
+                }
+            } catch (error) {
+                console.error('Error creating server:', error);
+                showNotification('Failed to create server', 'error');
+            }
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `fixed bottom-4 right-4 px-6 py-3 rounded-lg text-white ${
+                type === 'success' ? 'bg-green-500' : 'bg-red-500'
+            } animate-fade-in`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+    </script>
+</body>
+</html> 

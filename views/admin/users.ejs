@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users - <%= settings.name %> Admin</title>
+    <link rel="icon" type="image/png" href="<%= settings.logo %>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-[#0F0F0F] text-white min-h-screen">
+    <div class="flex">
+        <!-- Admin Navigation -->
+        <%- include('../components/admin-navigation') %>
+
+        <!-- Main Content -->
+        <main class="flex-1 ml-72 p-8">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold">Users</h1>
+                    <p class="text-gray-400">Manage your users</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <input type="text" id="searchInput" placeholder="Search users..." class="bg-[#1A1A1A] rounded-xl px-4 py-2 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Table -->
+            <div class="bg-[#1A1A1A] rounded-xl overflow-hidden animate-fade-in">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="bg-[#242424] text-left">
+                                <th class="p-4">User</th>
+                                <th class="p-4">RAM</th>
+                                <th class="p-4">CPU</th>
+                                <th class="p-4">Disk</th>
+                                <th class="p-4">Servers</th>
+                                <th class="p-4">Coins</th>
+                                <th class="p-4">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <!-- Users will be loaded here via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div id="editModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center">
+        <div class="bg-[#1A1A1A] rounded-xl p-6 w-full max-w-md">
+            <h2 class="text-xl font-bold mb-4">Edit User</h2>
+            <form id="editForm" class="space-y-4">
+                <input type="hidden" id="editUserId">
+                <div>
+                    <label class="block text-gray-400 mb-1">RAM (MB)</label>
+                    <input type="number" id="editRam" class="w-full bg-[#242424] rounded-lg px-4 py-2">
+                </div>
+                <div>
+                    <label class="block text-gray-400 mb-1">CPU (%)</label>
+                    <input type="number" id="editCpu" class="w-full bg-[#242424] rounded-lg px-4 py-2">
+                </div>
+                <div>
+                    <label class="block text-gray-400 mb-1">Disk (MB)</label>
+                    <input type="number" id="editDisk" class="w-full bg-[#242424] rounded-lg px-4 py-2">
+                </div>
+                <div>
+                    <label class="block text-gray-400 mb-1">Servers</label>
+                    <input type="number" id="editServers" class="w-full bg-[#242424] rounded-lg px-4 py-2">
+                </div>
+                <div>
+                    <label class="block text-gray-400 mb-1">Coins</label>
+                    <input type="number" id="editCoins" class="w-full bg-[#242424] rounded-lg px-4 py-2">
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="closeEditModal()" class="px-4 py-2 rounded-lg bg-[#242424] hover:bg-[#2A2A2A]">Cancel</button>
+                    <button type="submit" class="px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Load users on page load
+        document.addEventListener('DOMContentLoaded', loadUsers);
+
+        async function loadUsers() {
+            try {
+                const response = await fetch('/admin/api/users');
+                const users = await response.json();
+                renderUsers(users);
+            } catch (error) {
+                console.error('Error loading users:', error);
+            }
+        }
+
+        function renderUsers(users) {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = users.map(user => `
+                <tr class="border-t border-[#242424] hover:bg-[#242424]">
+                    <td class="p-4">
+                        <div class="flex items-center space-x-3">
+                            <img src="${user.avatar}" class="w-10 h-10 rounded-full">
+                            <div>
+                                <div class="font-medium">${user.username}</div>
+                                <div class="text-sm text-gray-400">${user.discordId}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="p-4">${user.ram} MB</td>
+                    <td class="p-4">${user.cpu}%</td>
+                    <td class="p-4">${user.disk} MB</td>
+                    <td class="p-4">${user.servers}</td>
+                    <td class="p-4">${user.coins}</td>
+                    <td class="p-4">
+                        <button onclick="openEditModal(${JSON.stringify(user)})" class="text-blue-500 hover:text-blue-400">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('#usersTableBody tr');
+            
+            rows.forEach(row => {
+                const username = row.querySelector('.font-medium').textContent.toLowerCase();
+                const discordId = row.querySelector('.text-gray-400').textContent.toLowerCase();
+                
+                if (username.includes(searchTerm) || discordId.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+
+        // Edit modal functions
+        function openEditModal(user) {
+            document.getElementById('editModal').classList.remove('hidden');
+            document.getElementById('editUserId').value = user.discordId;
+            document.getElementById('editRam').value = user.ram;
+            document.getElementById('editCpu').value = user.cpu;
+            document.getElementById('editDisk').value = user.disk;
+            document.getElementById('editServers').value = user.servers;
+            document.getElementById('editCoins').value = user.coins;
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.add('hidden');
+        }
+
+        // Handle form submission
+        document.getElementById('editForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const userId = document.getElementById('editUserId').value;
+            const data = {
+                ram: parseInt(document.getElementById('editRam').value),
+                cpu: parseInt(document.getElementById('editCpu').value),
+                disk: parseInt(document.getElementById('editDisk').value),
+                servers: parseInt(document.getElementById('editServers').value),
+                coins: parseInt(document.getElementById('editCoins').value)
+            };
+
+            try {
+                const response = await fetch(`/admin/users/${userId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    closeEditModal();
+                    loadUsers(); // Reload the users table
+                } else {
+                    const error = await response.json();
+                    alert(error.error || 'Failed to update user');
+                }
+            } catch (error) {
+                console.error('Error updating user:', error);
+                alert('Failed to update user');
+            }
+        });
+    </script>
+</body>
+</html> 

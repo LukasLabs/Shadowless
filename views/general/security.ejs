@@ -1,57 +1,107 @@
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <title><%= settings.name %></title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security - <%= settings.name %></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+    </style>
 </head>
-<body class="text-white bg-[171717]">
-  <div class="flex">
-      <!-- Sidebar -->
-      <%- include('../components/navigation') %>
-      <!-- Main Content -->
-      <main class="container flex-grow px-4 py-8 mx-auto">
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-          <div class="px-4 py-8 sm:px-0">
-            <div class="p-6 rounded-3xl shadow bg-[262626]">
-              <div class="px-4 sm:px-0">
-                <h3 class="text-base font-semibold leading-7 text-stone-200">Security Settings</h3>
-                <p class="mt-1 text-sm leading-6 text-stone-400">Manage your account security and authentication settings.</p>
-              </div>
-              <div class="mt-6 border-t border-gray-200">
-                <dl class="divide-y divide-gray-300">
-                  <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                    <dt class="text-sm font-medium leading-6 text-stone-300">Username</dt>
-                    <dd class="mt-1 text-sm leading-6 text-stone-400 sm:col-span-2 sm:mt-0"><span class="px-4 py-2 rounded-full bg-stone-800 text-stone-200"><%= pterodactyl.username %></span></dd>
-                  </div>
-                  <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                    <dt class="text-sm font-medium leading-6 text-stone-300">Email</dt>
-                    <dd class="mt-1 text-sm leading-6 text-stone-400 sm:col-span-2 sm:mt-0"><span class="px-4 py-2 rounded-full bg-stone-800 text-stone-200"><%= pterodactyl.email %></span></dd>
-                  </div>
-                  <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                    <dt class="text-sm font-medium leading-6 text-stone-300">Password</dt>
-                    <dd class="flex mt-1 text-sm leading-6 text-stone-400 sm:col-span-2 sm:mt-0">
-                      <% if (req.session.password) { %>
-                      <span class="flex-grow"><%= req.session.password %></span>
-                      <% } else { %>
-                      <span class="flex-grow">••••••••</span>
-                      <% } %>
-                      <span class="flex-shrink-0 ml-4">
-                        <% if (req.session.password) { %>
-                        <a href="../security" class="px-3 py-2 text-sm font-semibold rounded-md shadow-sm bg-stone-800 text-stone-200 hover:bg-stone-700">Hide</a>
-                        <% } else { %>
-                        <a href="../regen" class="px-3 py-2 text-sm font-semibold rounded-md shadow-sm bg-stone-800 text-stone-200 hover:bg-stone-700">Show</a>
-                        <% } %>
-                      </span>
-                    </dd>
-                  </div>
-                </dl>
-              </div>
+<body class="bg-[#0F0F0F] text-white min-h-screen">
+    <div class="flex">
+        <!-- Sidebar -->
+        <%- include('../components/navigation') %>
+        
+        <!-- Main Content -->
+        <main class="flex-1 ml-72 p-8">
+            <!-- Header -->
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold mb-2">Security Settings</h1>
+                    <p class="text-gray-400">Manage your account security and authentication settings</p>
+                </div>
+                <div class="flex items-center space-x-3 p-3 rounded-xl bg-[#1A1A1A]">
+                    <i class="fas fa-shield-alt text-red-500"></i>
+                    <span class="font-medium">Account Security</span>
+                </div>
             </div>
-          </div>
-        </div>
-        <%- include('../components/footer') %>
-            
-    </main>
+
+            <!-- Security Card -->
+            <div class="bg-[#1A1A1A] rounded-xl p-6 animate-fade-in">
+                <!-- Account Information -->
+                <div class="space-y-6">
+                    <!-- Username -->
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between p-4 rounded-xl bg-[#242424] transition-all duration-300 hover:bg-[#2A2A2A]">
+                        <div class="mb-2 md:mb-0">
+                            <div class="text-sm text-gray-400 mb-1">Username</div>
+                            <div class="font-medium text-white flex items-center space-x-2">
+                                <i class="fas fa-user text-blue-500"></i>
+                                <span><%= pterodactyl.username %></span>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="px-3 py-1 rounded-lg bg-blue-500/10 text-blue-400 text-sm">Verified</span>
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between p-4 rounded-xl bg-[#242424] transition-all duration-300 hover:bg-[#2A2A2A]">
+                        <div class="mb-2 md:mb-0">
+                            <div class="text-sm text-gray-400 mb-1">Email Address</div>
+                            <div class="font-medium text-white flex items-center space-x-2">
+                                <i class="fas fa-envelope text-purple-500"></i>
+                                <span><%= pterodactyl.email %></span>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="px-3 py-1 rounded-lg bg-purple-500/10 text-purple-400 text-sm">Primary</span>
+                        </div>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between p-4 rounded-xl bg-[#242424] transition-all duration-300 hover:bg-[#2A2A2A]">
+                        <div class="mb-2 md:mb-0">
+                            <div class="text-sm text-gray-400 mb-1">Password</div>
+                            <div class="font-medium text-white flex items-center space-x-2">
+                                <i class="fas fa-key text-yellow-500"></i>
+                                <span><% if (req.session.password) { %><%= req.session.password %><% } else { %>••••••••<% } %></span>
+                            </div>
+                        </div>
+                        <div>
+                            <% if (req.session.password) { %>
+                            <a href="../security" class="px-4 py-2 rounded-xl bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-medium text-sm transition-all duration-300 shadow-lg hover:shadow-red-500/20">
+                                Hide Password
+                            </a>
+                            <% } else { %>
+                            <a href="../regen" class="px-4 py-2 rounded-xl bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-medium text-sm transition-all duration-300 shadow-lg hover:shadow-green-500/20">
+                                Show Password
+                            </a>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Security Info -->
+                <div class="mt-6 p-4 rounded-xl bg-yellow-500/10 border border-yellow-500/20">
+                    <div class="flex items-start space-x-3">
+                        <i class="fas fa-exclamation-triangle text-yellow-500 mt-1"></i>
+                        <div>
+                            <h3 class="text-sm font-medium text-yellow-500">Security Notice</h3>
+                            <p class="text-sm text-yellow-400/80 mt-1">Keep your password secure and never share it with anyone. Change it immediately if you suspect unauthorized access.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
 </body>
+</html>

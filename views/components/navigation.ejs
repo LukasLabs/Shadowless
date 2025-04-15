@@ -1,96 +1,118 @@
 <!-- Sidebar -->
 <head>
-  <link rel="icon" type="image/x-icon" href="../assets/favicon.png">
+  <link rel="icon" type="image/x-icon" href="https://i.imgur.com/GY3cXet.png">
 </head>
-<nav>
-  <div class="ml-2 mt-4 rounded-2xl w-64 p-4 bg-[#262626] overflow-hidden">
-  <div class="flex items-center mb-6">
-      <img class="w-10 h-10 mr-2 rounded-md" src="<%= settings.logo %>">
-      <span class="text-2xl font-bold "><%= settings.name %></span>
+<nav class="fixed left-0 top-0 h-screen w-72 bg-[#0F0F0F] border-r border-[#1A1A1A]">
+  <div class="flex flex-col h-full">
+    <!-- Logo and Brand -->
+    <div class="p-6 border-b border-[#1A1A1A]">
+      <div class="flex items-center space-x-3">
+        <img class="w-8 h-8 rounded-lg" src="<%= settings.logo || '/assets/logo.png' %>" alt="Logo">
+        <span class="text-xl font-semibold text-white"><%= settings.name || 'ShadowlessDash' %></span>
+      </div>
+    </div>
+
+    <!-- User Profile -->
+    <div class="p-4 border-b border-[#1A1A1A]">
+      <div class="flex items-center space-x-3 p-3 rounded-xl bg-gradient-to-r from-[#1A1A1A] to-[#242424] hover:from-[#242424] hover:to-[#2A2A2A] transition-all duration-300 shadow-lg">
+        <% if (req.session && req.session.userinfo) { %>
+          <img class="w-10 h-10 rounded-full ring-2 ring-blue-500/20" src="https://cdn.discordapp.com/avatars/<%= req.session.userinfo.id %>/<%= req.session.userinfo.avatar %>.jpg?size=1024" alt="User avatar">
+          <div>
+            <div class="font-medium text-white"><%= req.session.userinfo.username %></div>
+            <div class="text-sm text-gray-400 flex items-center">
+              <i class="fas fa-coins text-yellow-500 mr-1"></i>
+              <%= coins || 0 %> <%= settings.api?.client?.coins?.name || 'Coins' %>
+            </div>
+          </div>
+        <% } else { %>
+          <div class="w-10 h-10 rounded-full ring-2 ring-blue-500/20 bg-[#242424] flex items-center justify-center">
+            <i class="fas fa-user text-gray-400"></i>
   </div>
-  <div class="flex items-center p-1 mb-6 transition border-2 border-white border-dashed hover:scale-105 rounded-xl">
-      <img alt="User avatar" class="mr-2 rounded-full" height="40" src="https://cdn.discordapp.com/avatars/<%= req.session.userinfo.id%>/<%= req.session.userinfo.avatar%>.jpg?size=1024" width="40"/>
       <div>
-          <div class="font-bold"><%= req.session.userinfo.username%></div>
-          <div class="text-sm text-gray-400"><%= coins %> <%= settings.api.client.coins.name %></div>
+            <div class="font-medium text-white">Guest User</div>
+            <div class="text-sm text-gray-400 flex items-center">
+              <i class="fas fa-coins text-yellow-500 mr-1"></i>
+              0 <%= settings.api?.client?.coins?.name || 'Coins' %>
+            </div>
+          </div>
+        <% } %>
       </div>
   </div>
-  <nav>
-      <ul>
-          <li class="mb-2">
-            <a href="/servers/new" class="hover:scale-95  decoration flex flex-row items-center space-x-1 w-full p-1 rounded-md mt-5 cursor-pointer hover:bg-inactive bg-gradient-to-r from-blue-500 to-blue-700 hover:bg-blue-500 justify-between border-[1px] border-blue-500 transition"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"></rect><path d="M228,128a12,12,0,0,1-12,12H140v76a12,12,0,0,1-24,0V140H40a12,12,0,0,1,0-24h76V40a12,12,0,0,1,24,0v76h76A12,12,0,0,1,228,128Z"></path></svg> <p class="w-full text-center">Create a server</p></a>
-          </li>
-          <li class="mb-2">
-            <a href="/dashboard" class="nav-link transition hover:scale-95 text-gray-200 bg-[#191919] shadow-sm hover:bg-[#2d3a3a] backdrop-blur group flex items-center px-4 py-2 font-sans text-m font-semibold rounded-lg">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 mr-2 text-gray-500">
-                <path d="M7.628 1.099a.75.75 0 0 1 .744 0l5.25 3a.75.75 0 0 1 0 1.302l-5.25 3a.75.75 0 0 1-.744 0l-5.25-3a.75.75 0 0 1 0-1.302l5.25-3Z"></path>
-                <path d="m2.57 7.24-.192.11a.75.75 0 0 0 0 1.302l5.25 3a.75.75 0 0 0 .744 0l5.25-3a.75.75 0 0 0 0-1.303l-.192-.11-4.314 2.465a2.25 2.25 0 0 1-2.232 0L2.57 7.239Z"></path>
-                <path d="m2.378 10.6.192-.11 4.314 2.464a2.25 2.25 0 0 0 2.232 0l4.314-2.465.192.11a.75.75 0 0 1 0 1.303l-5.25 3a.75.75 0 0 1-.744 0l-5.25-3a.75.75 0 0 1 0-1.303Z"></path>
-              </svg>
-              Home
-            </a>
-          </li>
-          <li class="mb-2">
-            <a href="/store" class="nav-link transition bg-[#191919] hover:scale-95 text-gray-200  backdrop-blur hover:bg-[#2d3a3a] group flex items-center px-4 py-2 text-m font-medium rounded-lg">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 mr-2 text-gray-500">
-                <path fill-rule="evenodd" d="M6 5v1H4.667a1.75 1.75 0 0 0-1.743 1.598l-.826 9.5A1.75 1.75 0 0 0 3.84 19H16.16a1.75 1.75 0 0 0 1.743-1.902l-.826-9.5A1.75 1.75 0 0 0 15.333 6H14V5a4 4 0 0 0-8 0Zm4-2.5A2.5 2.5 0 0 0 7.5 5v1h5V5A2.5 2.5 0 0 0 10 2.5ZM7.5 10a2.5 2.5 0 0 0 5 0V8.75a.75.75 0 0 1 1.5 0V10a4 4 0 0 1-8 0V8.75a.75.75 0 0 1 1.5 0V10Z" clip-rule="evenodd"></path>
-              </svg>
-              Shop
-            </a>
-          </li>
-          <li class="mb-2">
-            <a href="/profile" class="nav-link transition bg-[#191919] text-gray-200  backdrop-blur hover:bg-[#2d3a3a] hover:scale-95 group flex items-center px-4 py-2 font-sans text-m font-medium rounded-lg">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 mr-2 text-gray-500">
-                <path d="M3.665 3.588A2 2 0 0 1 5.622 2h4.754a2 2 0 0 1 1.958 1.588l1.098 5.218a3.487 3.487 0 0 0-1.433-.306H4c-.51 0-.995.11-1.433.306l1.099-5.218Z"></path>
-                <path fill-rule="evenodd" d="M4 10a2 2 0 1 0 0 4h8a2 2 0 1 0 0-4H4Zm8 2.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM9.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" clip-rule="evenodd"></path>
-              </svg>
-              Control Panel
-            </a>
-          </li>
-          <li class="mb-2">
-            <a href="/earn" class="nav-link transition bg-[#191919] text-gray-200  backdrop-blur hover:bg-[#2d3a3a] hover:scale-95 group flex items-center px-4 py-2 text-m font-medium rounded-lg">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 mr-2 text-gray-500">
-                <path d="M2.273 5.625A4.483 4.483 0 0 1 5.25 4.5h13.5c1.141 0 2.183.425 2.977 1.125A3 3 0 0 0 18.75 3H5.25a3 3 0 0 0-2.977 2.625ZM2.273 8.625A4.483 4.483 0 0 1 5.25 7.5h13.5c1.141 0 2.183.425 2.977 1.125A3 3 0 0 0 18.75 6H5.25a3 3 0 0 0-2.977 2.625ZM5.25 9a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h13.5a3 3 0 0 0 3-3v-6a3 3 0 0 0-3-3H15a.75.75 0 0 0-.75.75 2.25 2.25 0 0 1-4.5 0A.75.75 0 0 0 9 9H5.25Z"></path>
-              </svg>
-                        Earn
-                      </a>
-          </li>
-          
-          <li class="mb-2">
-            <a href="/security" class="nav-link transition bg-[#191919] text-gray-200 backdrop-blur hover:bg-[#2d3a3a] hover:scale-95 group flex items-center px-4 py-2 text-m font-medium rounded-lg">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 mr-2 text-gray-500">
-                <path fill-rule="evenodd" d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z" clip-rule="evenodd"></path>
-              </svg>
-              Settings
-            </a>
-          </li>
 
-          
-          
-          <li>
-            <a href="../logout" class="nav-link transition hover:text-white text-red-600 hover:bg-[#bc4b51] backdrop-blur hover:scale-95 group flex items-center border-dashed border-2 border-gray-600 hover:border-red-900 px-4 py-2 text-m font-medium rounded-lg">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="inline-flex w-4 h-4 mr-1 text-red-500 ">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75"></path>
-              </svg>
-              Logout
+    <!-- Navigation Links -->
+    <div class="flex-1 p-4 space-y-2 overflow-y-auto">
+      <% if (req.session && req.session.userinfo) { %>
+        <a href="/servers/new" class="flex items-center space-x-3 p-3 rounded-xl text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-blue-500/20">
+          <i class="fas fa-plus w-5 h-5"></i>
+          <span>Create Server</span>
+        </a>
+
+        <a href="/dashboard" class="flex items-center space-x-3 p-3 rounded-xl text-gray-300 hover:text-white hover:bg-[#1A1A1A] transition-all duration-300 group">
+          <i class="fas fa-home w-5 h-5 group-hover:text-blue-500 transition-colors duration-300"></i>
+          <span>Dashboard</span>
+        </a>
+
+        <a href="/store" class="flex items-center space-x-3 p-3 rounded-xl text-gray-300 hover:text-white hover:bg-[#1A1A1A] transition-all duration-300 group">
+          <i class="fas fa-shopping-cart w-5 h-5 group-hover:text-purple-500 transition-colors duration-300"></i>
+          <span>Store</span>
+        </a>
+
+        <a href="/profile" class="flex items-center space-x-3 p-3 rounded-xl text-gray-300 hover:text-white hover:bg-[#1A1A1A] transition-all duration-300 group">
+          <i class="fas fa-user w-5 h-5 group-hover:text-green-500 transition-colors duration-300"></i>
+          <span>Profile</span>
+        </a>
+
+        <a href="/earn" class="flex items-center space-x-3 p-3 rounded-xl text-gray-300 hover:text-white hover:bg-[#1A1A1A] transition-all duration-300 group">
+          <i class="fas fa-coins w-5 h-5 group-hover:text-yellow-500 transition-colors duration-300"></i>
+          <span>Earn</span>
+        </a>
+
+        <a href="/security" class="flex items-center space-x-3 p-3 rounded-xl text-gray-300 hover:text-white hover:bg-[#1A1A1A] transition-all duration-300 group">
+          <i class="fas fa-shield-alt w-5 h-5 group-hover:text-red-500 transition-colors duration-300"></i>
+          <span>Security</span>
+        </a>
+
+        <!-- Admin Panel Toggle -->
+        <% if (pterodactyl.root_admin == true) { %>
+          <div class="relative group">
+            <a href="/admin" class="flex items-center space-x-3 p-3 rounded-xl text-gray-300 hover:text-white hover:bg-[#1A1A1A] transition-all duration-300 group">
+              <i class="fas fa-crown w-5 h-5 group-hover:text-red-500 transition-colors duration-300"></i>
+              <span>Admin Panel</span>
             </a>
-            </a>
-          </li>
-          
-      </ul>
-      
-  </nav>
+            <div class="absolute left-0 mt-2 w-48 bg-[#1A1A1A] rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform group-hover:translate-y-0 translate-y-2">
+              <div class="py-1">
+                <a href="/admin" class="block px-4 py-2 text-sm text-gray-300 hover:bg-[#2A2A2A] hover:text-white transition-colors duration-200">
+                  <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
+                </a>
+                <a href="/admin/users" class="block px-4 py-2 text-sm text-gray-300 hover:bg-[#2A2A2A] hover:text-white transition-colors duration-200">
+                  <i class="fas fa-users mr-2"></i>Users
+                </a>
+                <a href="/admin/servers" class="block px-4 py-2 text-sm text-gray-300 hover:bg-[#2A2A2A] hover:text-white transition-colors duration-200">
+                  <i class="fas fa-server mr-2"></i>Servers
+                </a>
+                <a href="/admin/settings" class="block px-4 py-2 text-sm text-gray-300 hover:bg-[#2A2A2A] hover:text-white transition-colors duration-200">
+                  <i class="fas fa-cog mr-2"></i>Settings
+                </a>
+              </div>
+            </div>
 </div>
-<% if (pterodactyl.root_admin == true) { %>
-<div class="transition hover:scale-105 ml-2 mt-4 rounded-2xl w-64 p-4 bg-[#262626]">
-  <h2 class="pb-1 text-m" >Admin Area</h2>
-    <a href="../admin" class="nav-link transition bg-[#f03040] text-gray-200 backdrop-blur hover:border-dashed hover:scale-95 group flex items-center px-4 py-2 text-m font-medium rounded-lg">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 mr-2 text-gray-200">
-        <path fill-rule="evenodd" d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z" clip-rule="evenodd"></path>
-      </svg>
-      Admin
-    </a>
-  
+        <% } %>
+      <% } else { %>
+        <a href="/login" class="flex items-center space-x-3 p-3 rounded-xl text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-blue-500/20">
+          <i class="fas fa-sign-in-alt w-5 h-5"></i>
+          <span>Login</span>
+        </a>
+      <% } %>
+    </div>
+
+    <!-- Logout Button -->
+    <% if (req.session && req.session.userinfo) { %>
+      <div class="p-4 border-t border-[#1A1A1A]">
+        <a href="../logout" class="flex items-center space-x-3 p-3 rounded-xl text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all duration-300 group">
+          <i class="fas fa-sign-out-alt w-5 h-5 group-hover:rotate-180 transition-transform duration-300"></i>
+          <span>Logout</span>
+        </a>
 </div>
 <% } %>
+  </div>
 </nav>

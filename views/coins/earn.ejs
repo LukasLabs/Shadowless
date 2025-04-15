@@ -1,145 +1,133 @@
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <title><%= settings.name %></title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earn - <%= settings.name %></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+    </style>
 </head>
-<body class="text-white bg-[171717]">
-  <div class="flex">
-      <!-- Sidebar -->
-      <%- include('../components/navigation') %>
-      <!-- Main Content -->
-      <main class="container flex-grow px-4 py-8 mx-auto">
-        <div class="flex items-center justify-between w-full pb-4 mx-auto">
-          <!-- Welcome text and subtext on the left -->
-          <div class="flex flex-col">
-              <h1 class="text-xl font-semibold mb-0.5" style="font-family: 'Cabin';">AFK Page</h1>
-              <p class="text-gray-400 text-md">Earn free rewards for keeping this page open.</p>
-          </div>
-  
-          <!-- Breadcrumbs on the right -->
-          <nav aria-label="Breadcrumb" class="inline-flex px-4 py-2 transition-colors duration-200 rounded-xl bg-white/5">
-              <ol role="list" class="flex items-center space-x-2">
-                  <li>
-                      <a href="/dashboard" class="flex items-center gap-2 text-sm transition-colors duration-200 text-zinc-400 hover:text-zinc-200" aria-current="false">
-                          <svg
-                              aria-hidden="true"
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              stroke-width="2"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              class="icon icon-tabler size-4 icons-tabler-outline icon-tabler-home"
-                          >
-                              <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                              <path d="M5 12l-2 0l9 -9l9 9l-2 0"></path>
-                              <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"></path>
-                              <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"></path>
-                          </svg>
-                          <span>Home</span>
-                      </a>
-                  </li>
-                  <li class="flex items-center">
-                      <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right size-4 text-zinc-400"
-                      >
-                          <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                          <path d="M9 6l6 6l-6 6"></path>
-                      </svg>
-                  </li>
-                  <li>
-                      <a href="#_" class="flex items-center gap-2 text-sm font-medium transition-colors duration-200 text-white/80 hover:text-white" aria-current="page">
-                          AFK Page
-                      </a>
-                  </li>
-              </ol>
-          </nav>
-      </div>
-  
-      <!-- AFK Page Content -->
-      <div class="flex justify-center mt-24">
-          <div class="text-center">
-              <div class="mb-6">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-16 w-16 bg-white/5 p-1.5 rounded-xl border border-white/10 mx-auto text-gray-200">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M15.042 21.672 13.684 16.6m0 0-2.51 2.225.569-9.47 5.227 7.917-3.286-.672Zm-7.518-.267A8.25 8.25 0 1 1 20.25 10.5M8.288 14.212A5.25 5.25 0 1 1 17.25 10.5" />
-                  </svg>                  
-              </div>
-              <h2 class="mb-4 text-2xl font-bold">AFK Page</h2>
-              <p class="mb-6 text-gray-400">Earn <%= settings.coinname %> for free, by leaving this page open. <span class="hidden" id="sessionDuration">-</span></p>
-              
-              <script>
-                const coinsPerMinute = '<%= settings.api.afk.coins %>'; // Assuming this is 5
-                let totalCoins = 0;
-              
-                function connect() {
-                  const socket = new WebSocket(`${window.location.href.startsWith("https://") ? "wss" : "ws"}://${window.location.host}/earn/ws`);
-              
-                  socket.onopen = () => {
-                    console.log("WebSocket connection opened");
-                  };
-              
-                  socket.onmessage = (event) => {
-                    let data = JSON.parse(event.data);
-                    if (data.type === "coin") {
-                      // Increment totalCoins by coinsPerMinute
-                      totalCoins += parseInt(coinsPerMinute, 10); // Ensure it's treated as an integer
-                      document.getElementById("sessionEarn").innerText = `${totalCoins}`;
-                    }
-                  };
-              
-                  socket.onclose = (event) => {
-                    document.getElementById("sessionEarn").innerText = `Connection closed`;
-                    if (event.wasClean) {
-                      console.error(`WebSocket connection closed cleanly, code=${event.code}`);
-                    } else {
-                      console.error('WebSocket connection closed abruptly');
-                    }
-                    setTimeout(connect, 5000);
-                  };
-                }
-              
-                connect();
-              </script>
-              
-              <form>
-                  <div class="flex justify-between mb-6">
-                      <button type="button" class="bg-sky-600 text-sm font-medium text-white px-4 py-2 rounded-full hover:bg-<%= settings.primarycolor %>-700 transition"><span id="afk-time"><script>
-                        
-                    </script></span> seconds</button>
-                      <button type="button" class="px-4 py-2 text-sm font-medium text-gray-700 transition bg-gray-200 rounded-full hover:bg-gray-300"><span id="sessionEarn">0</span> Coins</button>
-                  </div>
-              </form>
-              <div class="border-t border-white/5">
-              <p class="mt-16 mb-3 text-sm tracking-widest text-gray-500 uppercase">WHY NOT COMPLETE LINKVERTISE LINKS WHILE YOU AFK?</p>
-                  <p class="text-2xl font-bold text-white"><span id="usedToday"></span>Linkvertise</p>
-                  <p class="mt-2 text-sm text-gray-300">For every Linkvertise link you complete, you will get <%= settings.linkvertise.coins %> <%= settings.coinname %>.</p>
-                  <div class="flex justify-center mt-4">
-                      <a href="./lv" target="_blank" class="relative flex justify-center px-6 py-2 text-sm font-medium text-white transition ease-in-out border border-transparent rounded-full cursor-pointer group bg-sky-600 hover:bg-sky-700 focus:outline-none">
-                          Go to Linkvertise
-                      </a>
-                  </div>
-              </div>
-          </div>
-      </div>
-            
-    </main>
+<body class="bg-[#0F0F0F] text-white min-h-screen">
+    <div class="flex">
+        <!-- Sidebar -->
+        <%- include('../components/navigation') %>
+        
+        <!-- Main Content -->
+        <main class="flex-1 ml-72 p-8">
+            <!-- Header -->
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold mb-2">AFK Page</h1>
+                    <p class="text-gray-400">Earn free rewards for keeping this page open</p>
+                </div>
+                <div class="flex items-center space-x-3 p-3 rounded-xl bg-[#1A1A1A]">
+                    <i class="fas fa-coins text-yellow-500"></i>
+                    <span class="font-medium"><%= coins %> <%= settings.api.client.coins.name %></span>
+                </div>
+            </div>
+
+            <!-- AFK Content -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- AFK Timer Card -->
+                <div class="bg-[#1A1A1A] rounded-xl p-6 animate-fade-in">
+                    <div class="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center mb-4">
+                        <i class="fas fa-clock text-blue-500 text-xl"></i>
+                    </div>
+                    <h2 class="text-xl font-bold mb-2">AFK Timer</h2>
+                    <p class="text-gray-400 mb-6">Earn <%= settings.coinname %> for free, by leaving this page open.</p>
+                    
+                    <div class="flex space-x-4 mb-6">
+                        <div class="flex-1 p-4 rounded-xl bg-[#242424]">
+                            <div class="text-2xl font-bold text-blue-500" id="afk-time">0</div>
+                            <div class="text-sm text-gray-400">Seconds</div>
+                        </div>
+                        <div class="flex-1 p-4 rounded-xl bg-[#242424]">
+                            <div class="text-2xl font-bold text-yellow-500" id="sessionEarn">0</div>
+                            <div class="text-sm text-gray-400">Coins Earned</div>
+                        </div>
+                    </div>
+
+                    <div class="text-sm text-gray-400">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        You earn <%= settings.api.afk.coins %> coins per minute while AFK
+                    </div>
+                </div>
+
+                <!-- Linkvertise Card -->
+                <div class="bg-[#1A1A1A] rounded-xl p-6 animate-fade-in">
+                    <div class="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center mb-4">
+                        <i class="fas fa-link text-purple-500 text-xl"></i>
+                    </div>
+                    <h2 class="text-xl font-bold mb-2">Linkvertise</h2>
+                    <p class="text-gray-400 mb-4">Complete Linkvertise links to earn additional coins</p>
+                    
+                    <div class="mb-6">
+                        <div class="text-2xl font-bold text-purple-500 mb-2" id="usedToday">0</div>
+                        <p class="text-sm text-gray-400">Links completed today</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-2 text-gray-400">
+                            <i class="fas fa-coins text-yellow-500"></i>
+                            <span>Earn <%= settings.linkvertise.coins %> <%= settings.coinname %> per link</span>
+                        </div>
+                        <a href="./lv" target="_blank" class="block w-full py-3 rounded-xl bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-semibold text-center transition-all duration-300 shadow-lg hover:shadow-purple-500/20">
+                            Go to Linkvertise
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
     <script>
-      let afkTime = 0;
-      let afkInterval = setInterval(() => {
-        afkTime++;
-        document.getElementById("afk-time").textContent = `${afkTime}`;
-      }, 1000);
-    
+        // WebSocket Connection
+        const coinsPerMinute = '<%= settings.api.afk.coins %>';
+        let totalCoins = 0;
+        let afkTime = 0;
+
+        function connect() {
+            const socket = new WebSocket(`${window.location.href.startsWith("https://") ? "wss" : "ws"}://${window.location.host}/earn/ws`);
+
+            socket.onopen = () => {
+                console.log("WebSocket connection opened");
+            };
+
+            socket.onmessage = (event) => {
+                let data = JSON.parse(event.data);
+                if (data.type === "coin") {
+                    totalCoins += parseInt(coinsPerMinute, 10);
+                    document.getElementById("sessionEarn").innerText = `${totalCoins}`;
+                }
+            };
+
+            socket.onclose = (event) => {
+                document.getElementById("sessionEarn").innerText = `Connection closed`;
+                if (event.wasClean) {
+                    console.error(`WebSocket connection closed cleanly, code=${event.code}`);
+                } else {
+                    console.error('WebSocket connection closed abruptly');
+                }
+                setTimeout(connect, 5000);
+            };
+        }
+
+        // AFK Timer
+        let afkInterval = setInterval(() => {
+            afkTime++;
+            document.getElementById("afk-time").textContent = `${afkTime}`;
+        }, 1000);
+
+        connect();
     </script>
 </body>
+</html>
