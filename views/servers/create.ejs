@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title><%= settings.name %></title>
+    <title><%= settings.name %> - Create Server</title>
     <link rel="icon" type="image/png" href="https://i.imgur.com/GY3cXet.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
@@ -15,225 +15,325 @@
         .animate-fade-in {
             animation: fadeIn 0.3s ease-out forwards;
         }
+        .shadow-glow {
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+        }
+        .gradient-text {
+            background: linear-gradient(45deg, #6366f1, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .bg-grid {
+            background-image: radial-gradient(rgba(99, 102, 241, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .card-hover:hover {
+            transform: translateY(-3px);
+        }
         .image-card.selected {
-            box-shadow: 0 0 0 2px #3B82F6;
-            background-color: rgba(59, 130, 246, 0.1);
+            box-shadow: 0 0 0 2px #6366f1;
+            background-color: rgba(99, 102, 241, 0.1);
             transform: scale(1.02);
         }
         .location-card.selected {
-            box-shadow: 0 0 0 2px #3B82F6;
-            background-color: rgba(59, 130, 246, 0.1);
+            box-shadow: 0 0 0 2px #6366f1;
+            background-color: rgba(99, 102, 241, 0.1);
             transform: scale(1.02);
-        }
-        .hardware-info-tooltip {
-            @apply invisible opacity-0 absolute right-full top-1/2 -translate-y-1/2 bg-black/80 text-white text-left p-3 rounded-lg z-10 w-max max-w-[250px] mr-3 transition-all duration-200;
-        }
-        .hardware-info:hover .hardware-info-tooltip {
-            @apply visible opacity-100;
         }
     </style>
 </head>
-<body class="bg-[#0F0F0F] text-white min-h-screen">
+<body class="bg-black text-white min-h-screen">
     <div class="flex">
         <!-- Sidebar -->
         <%- include('../components/navigation') %>
         
         <!-- Main Content -->
         <main class="flex-1 ml-72 p-8">
-            <!-- Header -->
-            <div class="flex items-center justify-between mb-8 animate-fade-in">
-                <div>
-                    <h1 class="text-3xl font-bold mb-2">Create Server</h1>
-                    <p class="text-gray-400">Configure and deploy your new game server</p>
+            <!-- Welcome Section -->
+            <div class="relative rounded-2xl overflow-hidden mb-8 animate-fade-in shadow-glow">
+                <div class="absolute inset-0 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 backdrop-blur-sm bg-grid"></div>
+                <div class="relative p-8 flex items-center justify-between">
+                    <div>
+                        <h1 class="text-4xl font-bold mb-2 gradient-text">Create New Server</h1>
+                        <p class="text-gray-300">Configure and deploy your new Minecraft server with just a few clicks.</p>
+                    </div>
+                    <a href="/dashboard" class="bg-white/10 hover:bg-white/15 border border-white/10 rounded-xl px-5 py-3 flex items-center space-x-2 transition-all duration-300">
+                        <i class="fas fa-arrow-left text-indigo-400"></i>
+                        <span>Back to Dashboard</span>
+                    </a>
                 </div>
-                <a href="/dashboard" class="flex items-center px-4 py-2 text-sm text-gray-300 transition bg-white/5 rounded-xl hover:bg-white/10">
-                    <i class="fas fa-arrow-left mr-2"></i>
-                    Back to Dashboard
-                </a>
-                    </div>
-                
-            <!-- Error Messages -->
-                    <% if (req.query.err) { %>
-                <div class="mb-6 animate-fade-in">
-                    <div class="flex items-center justify-between p-4 rounded-xl border <%= req.query.err === 'none' ? 'bg-green-500/10 border-green-500/20 text-green-400' : 'bg-red-500/10 border-red-500/20 text-red-400' %>">
-                        <span>
-                            <% if (req.query.err === "MISSINGVARIABLE") { %>
-                                You have not filled out all of the server information.
-                            <% } else if (req.query.err === "NOTANUMBER") { %>
-                                RAM, disk and CPU must be a number.
-                            <% } else if (req.query.err === "ERRORONCREATE") { %>
-                                An error occurred while creating the server.
-                            <% } else if (req.query.err === "BIGSERVERNAME") { %>
-                                Server name must be less than 191 characters.
-                            <% } else if (req.query.err === "TOOMUCHSERVERS") { %>
-                                You have reached the maximum number of servers.
-                            <% } else if (req.query.err === "TOOLITTLECOINS") { %>
-                                Insufficient coins to create a server.
-                            <% } else if (req.query.err === "PREMIUMLOCATION") { %>
-                                Please select a valid location.
-                            <% } %>
-                        </span>
-                        <i class="fas fa-times cursor-pointer hover:opacity-75"></i>
-                    </div>
-                                                                </div>
-                                <% } %>
-                
+            </div>
+
+            <!-- Alerts -->
+            <% if (req.query.err) { %>
+            <div class="<%= req.query.err === 'none' ? 'bg-green-500/10 border-green-500/30' : 'bg-red-500/10 border-red-500/30' %> border rounded-xl p-4 mb-6 flex items-center justify-between animate-fade-in shadow-lg">
+                <div class="flex items-center">
+                    <i class="<%= req.query.err === 'none' ? 'fas fa-check-circle text-green-400' : 'fas fa-exclamation-circle text-red-400' %> mr-3 text-xl"></i>
+                    <span class="<%= req.query.err === 'none' ? 'text-green-400' : 'text-red-400' %>">
+                        <% if (req.query.err === "MISSINGVARIABLE") { %>
+                            You have not filled out all of the server information.
+                        <% } else if (req.query.err === "NOTANUMBER") { %>
+                            RAM, disk and CPU must be a number.
+                        <% } else if (req.query.err === "ERRORONCREATE") { %>
+                            An error occurred while creating the server.
+                        <% } else if (req.query.err === "BIGSERVERNAME") { %>
+                            Server name must be less than 191 characters.
+                        <% } else if (req.query.err === "TOOMUCHSERVERS") { %>
+                            You have reached the maximum number of servers.
+                        <% } else if (req.query.err === "TOOLITTLECOINS") { %>
+                            Insufficient coins to create a server.
+                        <% } else if (req.query.err === "PREMIUMLOCATION") { %>
+                            Please select a valid location.
+                        <% } %>
+                    </span>
+                </div>
+                <button class="<%= req.query.err === 'none' ? 'text-green-400 hover:text-green-300' : 'text-red-400 hover:text-red-300' %> transition-all">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <% } %>
+
             <!-- Server Creation Form -->
-            <form id="createServerForm" class="space-y-8 animate-fade-in">
+            <form id="createServerForm" class="space-y-6 animate-fade-in">
                 <!-- Basic Info -->
-                <div class="bg-[#1A1A1A] rounded-xl p-6">
-                    <h2 class="text-xl font-semibold mb-4">Basic Information</h2>
+                <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl p-6 hover:bg-gray-900/90 transition-all duration-300 card-hover shadow-lg">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center">
+                            <i class="fas fa-server text-indigo-500"></i>
+                        </div>
+                        <h2 class="text-xl font-bold gradient-text">Basic Information</h2>
+                    </div>
                     <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                         <div>
-                            <label class="block text-sm text-gray-400 mb-2">Server Name</label>
-                            <input type="text" name="name" class="w-full px-4 py-2 bg-[#242424] border border-[#2A2A2A] rounded-xl text-white focus:outline-none focus:border-blue-500 transition-colors" placeholder="my-awesome-server">
+                            <label class="block text-sm text-gray-300 mb-2">Server Name</label>
+                            <input type="text" name="name" class="w-full px-4 py-3 bg-gray-800/80 border border-indigo-500/20 rounded-xl text-white focus:outline-none focus:border-indigo-500 transition-colors" placeholder="my-awesome-server">
+                            <p class="mt-2 text-xs text-gray-400">This will be the identifier for your server.</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Server Resources -->
-                <div class="bg-[#1A1A1A] rounded-xl p-6">
-                    <h2 class="text-xl font-semibold mb-4">Server Resources</h2>
+                <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl p-6 hover:bg-gray-900/90 transition-all duration-300 card-hover shadow-lg">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
+                            <i class="fas fa-microchip text-purple-500"></i>
+                        </div>
+                        <h2 class="text-xl font-bold gradient-text">Server Resources</h2>
+                    </div>
                     <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
                         <div>
-                            <label class="block text-sm text-gray-400 mb-2">
-                                <i class="fas fa-memory text-blue-500 mr-2"></i>RAM (GB)
+                            <label class="block text-sm text-gray-300 mb-2">
+                                <i class="fas fa-memory text-indigo-400 mr-2"></i>RAM (GB)
                             </label>
-                            <input type="number" name="ram" value="<%= packages.ram/1024 + extraresources.ram/1024%>" class="w-full px-4 py-2 bg-[#242424] border border-[#2A2A2A] rounded-xl text-white focus:outline-none focus:border-blue-500 transition-colors">
+                            <div class="relative">
+                                <input type="number" name="ram" value="<%= packages.ram/1024 + extraresources.ram/1024%>" class="w-full px-4 py-3 bg-gray-800/80 border border-indigo-500/20 rounded-xl text-white focus:outline-none focus:border-indigo-500 transition-colors">
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                    <span class="text-gray-400">GB</span>
+                                </div>
+                            </div>
                         </div>
                         <div>
-                            <label class="block text-sm text-gray-400 mb-2">
-                                <i class="fas fa-microchip text-green-500 mr-2"></i>CPU (%)
+                            <label class="block text-sm text-gray-300 mb-2">
+                                <i class="fas fa-microchip text-blue-400 mr-2"></i>CPU (%)
                             </label>
-                            <input type="number" name="cpu" value="<%= packages.cpu + extraresources.cpu%>" class="w-full px-4 py-2 bg-[#242424] border border-[#2A2A2A] rounded-xl text-white focus:outline-none focus:border-blue-500 transition-colors">
+                            <div class="relative">
+                                <input type="number" name="cpu" value="<%= packages.cpu + extraresources.cpu%>" class="w-full px-4 py-3 bg-gray-800/80 border border-indigo-500/20 rounded-xl text-white focus:outline-none focus:border-indigo-500 transition-colors">
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                    <span class="text-gray-400">%</span>
+                                </div>
+                            </div>
                         </div>
                         <div>
-                            <label class="block text-sm text-gray-400 mb-2">
-                                <i class="fas fa-hdd text-purple-500 mr-2"></i>Disk (GB)
+                            <label class="block text-sm text-gray-300 mb-2">
+                                <i class="fas fa-hdd text-amber-400 mr-2"></i>Disk (GB)
                             </label>
-                            <input type="number" name="disk" value="<%= packages.disk/1024 + extraresources.disk/1024%>" class="w-full px-4 py-2 bg-[#242424] border border-[#2A2A2A] rounded-xl text-white focus:outline-none focus:border-blue-500 transition-colors">
+                            <div class="relative">
+                                <input type="number" name="disk" value="<%= packages.disk/1024 + extraresources.disk/1024%>" class="w-full px-4 py-3 bg-gray-800/80 border border-indigo-500/20 rounded-xl text-white focus:outline-none focus:border-indigo-500 transition-colors">
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                    <span class="text-gray-400">GB</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Server Location -->
-                <div class="bg-[#1A1A1A] rounded-xl p-6">
-                    <h2 class="text-xl font-semibold mb-4">Server Location</h2>
+                <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl p-6 hover:bg-gray-900/90 transition-all duration-300 card-hover shadow-lg">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center">
+                            <i class="fas fa-globe text-green-500"></i>
+                        </div>
+                        <h2 class="text-xl font-bold gradient-text">Server Location</h2>
+                    </div>
                     <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                         <% for (let [name, value] of Object.entries(settings.api.client.locations)) { %>
-                            <div class="relative flex flex-col p-4 transition-all duration-200 location-card hover:bg-[#242424] rounded-xl border border-[#2A2A2A]" data-location-id="<%= value.id %>">
-                                <div class="flex items-center space-x-3">
-                                    <img class="w-10 h-10 rounded-xl" src="https://flagsapi.com/<%= value.iso %>/flat/64.png" alt="<%= value.country %> Flag">
+                            <div class="relative p-5 transition-all duration-300 location-card bg-gray-800/50 hover:bg-gray-800/80 rounded-xl border border-indigo-500/20" data-location-id="<%= value.id %>">
+                                <div class="flex items-center">
+                                    <div class="w-14 h-14 rounded-xl overflow-hidden mr-4 bg-indigo-500/10 flex items-center justify-center">
+                                        <img class="w-10 h-10" src="https://flagsapi.com/<%= value.iso %>/flat/64.png" alt="<%= value.country %> Flag">
+                                    </div>
                                     <div>
-                                        <h3 class="font-medium"><%= value.name %></h3>
+                                        <h3 class="font-semibold text-lg"><%= value.name %></h3>
                                         <p class="text-sm text-gray-400"><%= value.country %></p>
                                     </div>
                                 </div>
-                                <div class="mt-4 space-y-2 text-sm text-gray-400">
-                                    <div class="flex items-center">
-                                        <i class="fas fa-map-marker-alt w-5 text-blue-500"></i>
-                                        <%= value.region %>
+                                <div class="mt-4 grid grid-cols-2 gap-3">
+                                    <div class="flex items-center space-x-2 text-sm">
+                                        <div class="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                                            <i class="fas fa-map-marker-alt text-blue-400 text-xs"></i>
+                                        </div>
+                                        <span class="text-gray-300"><%= value.region %></span>
                                     </div>
-                                    <div class="flex items-center">
-                                        <i class="fas fa-server w-5 text-green-500"></i>
-                                        <%= value.node %>
+                                    <div class="flex items-center space-x-2 text-sm">
+                                        <div class="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center">
+                                            <i class="fas fa-server text-purple-400 text-xs"></i>
+                                        </div>
+                                        <span class="text-gray-300"><%= value.node %></span>
                                     </div>
-                                    <div class="flex items-center">
-                                        <i class="fas fa-users w-5 text-purple-500"></i>
-                                        <%= value.capacity %> capacity
-                                    </div>
-                            </div>
+                                </div>
+                                <div class="mt-4 w-full h-1.5 bg-gray-700 rounded-full overflow-hidden">
+                                    <div class="h-full bg-green-500" style="width: <%= value.capacity %>%;"></div>
+                                </div>
+                                <div class="flex justify-between mt-2 text-xs text-gray-400">
+                                    <span>Capacity</span>
+                                    <span><%= value.capacity %>%</span>
+                                </div>
                             </div>
                         <% } %>
                     </div>
                 </div>
 
                 <!-- Server Software -->
-                <div class="bg-[#1A1A1A] rounded-xl p-6">
-                    <h2 class="text-xl font-semibold mb-4">Server Software</h2>
-                    <div class="relative mb-4">
-                        <input type="text" id="image-search" placeholder="Search server software..." class="w-full px-4 py-2 pl-10 bg-[#242424] border border-[#2A2A2A] rounded-xl text-white focus:outline-none focus:border-blue-500 transition-colors">
-                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl p-6 hover:bg-gray-900/90 transition-all duration-300 card-hover shadow-lg">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center">
+                            <i class="fas fa-cube text-amber-500"></i>
+                        </div>
+                        <h2 class="text-xl font-bold gradient-text">Server Software</h2>
+                    </div>
+                    <div class="relative mb-5">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            <i class="fas fa-search text-gray-400"></i>
+                        </div>
+                        <input type="text" id="image-search" placeholder="Search server software..." class="w-full pl-10 pr-4 py-3 bg-gray-800/80 border border-indigo-500/20 rounded-xl text-white focus:outline-none focus:border-indigo-500 transition-colors">
                     </div>
                     <div id="image-grid" class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    <% for (let [name, value] of Object.entries(settings.api.client.eggs)) { %>
-                            <div class="relative flex items-center p-4 transition-all duration-200 image-card hover:bg-[#242424] rounded-xl border border-[#2A2A2A]" data-category="<%= value.category %>" data-name="<%= value.display.toLowerCase() %>">
-                                <img class="w-12 h-12 rounded-xl" src="<%= value.icon %>" alt="<%= value.display %>">
-                                <div class="ml-4">
-                                    <h3 class="font-medium"><%= value.display %></h3>
-                                    <p class="text-sm text-gray-400"><%= value.category %></p>
-                        </div>
-                                <div class="absolute top-2 right-2">
-                                    <span class="px-2 py-1 text-xs font-medium text-green-400 bg-green-500/10 rounded-full border border-green-500/20">Free</span>
-                        </div>
-                      </div>
-                      <% } %>
-                  </div>
+                        <% for (let [name, value] of Object.entries(settings.api.client.eggs)) { %>
+                            <div class="relative p-5 transition-all duration-300 image-card bg-gray-800/50 hover:bg-gray-800/80 rounded-xl border border-indigo-500/20" data-category="<%= value.category %>" data-name="<%= value.display.toLowerCase() %>">
+                                <div class="flex items-center">
+                                    <div class="w-14 h-14 rounded-xl overflow-hidden mr-4 bg-indigo-500/10 flex items-center justify-center">
+                                        <img class="w-10 h-10" src="<%= value.icon %>" alt="<%= value.display %>">
+                                    </div>
+                                    <div>
+                                        <h3 class="font-semibold text-lg"><%= value.display %></h3>
+                                        <p class="text-sm text-gray-400"><%= value.category %></p>
+                                    </div>
+                                </div>
+                                <div class="absolute top-3 right-3">
+                                    <span class="px-2 py-1 text-xs bg-green-500/10 text-green-400 rounded-full border border-green-500/30">
+                                        Free
+                                    </span>
+                                </div>
+                            </div>
+                        <% } %>
+                    </div>
                 </div>
                 
                 <!-- Create Button -->
-                <div class="flex justify-end">
-                    <button type="button" onclick="submitForm()" class="px-6 py-3 text-white bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl hover:from-blue-600 hover:to-blue-700 transition-all duration-200 flex items-center space-x-2">
-                        <i class="fas fa-plus"></i>
-                        <span>Create Server <%= settings.servercreation.cost > 0 ? `(${settings.servercreation.cost} ${settings.coinname})` : '' %></span>
+                <div class="flex justify-end mt-8">
+                    <button type="button" onclick="submitForm()" class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-4 rounded-xl transition-all duration-300 flex items-center space-x-3 shadow-lg shadow-indigo-500/20">
+                        <i class="fas fa-rocket"></i>
+                        <span>Deploy Server <%= settings.servercreation.cost > 0 ? `(${settings.servercreation.cost} ${settings.coinname})` : '' %></span>
                     </button>
-                                </div>
-                            </form>
+                </div>
+            </form>
         </main>
-                    </div>
-                    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/AlertifyJS/1.13.1/alertify.js"></script>
-                    <script>
-        // Handle location selection
-        const locationCards = document.querySelectorAll('.location-card');
-        locationCards.forEach(card => {
-            card.addEventListener('click', () => {
-                // Remove selected class from all location cards
-                locationCards.forEach(c => c.classList.remove('selected'));
-                // Add selected class to clicked card
-                card.classList.add('selected');
-                // Store the selected location ID
-                const locationId = card.getAttribute('data-location-id');
-                document.querySelector('#createServerForm').setAttribute('data-selected-location', locationId);
-            });
-        });
+    </div>
 
-        // Handle software selection
-                    const imageCards = document.querySelectorAll('.image-card');
-                    imageCards.forEach(card => {
-            card.addEventListener('click', () => {
-                // Remove selected class from all image cards
-                            imageCards.forEach(c => c.classList.remove('selected'));
-                            // Add selected class to clicked card
-                            card.classList.add('selected');
-                // Store the selected software name
-                const softwareName = card.querySelector('h3').textContent;
-                document.querySelector('#createServerForm').setAttribute('data-selected-software', softwareName);
-                        });
-                    });
-                
-        // Search functionality
-        const searchInput = document.getElementById('image-search');
-        searchInput.addEventListener('input', (e) => {
-            const searchTerm = e.target.value.toLowerCase();
-            const cards = document.querySelectorAll('.image-card');
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize close buttons for alerts
+            const alertCloseButtons = document.querySelectorAll('.bg-red-500/10 button, .bg-green-500/10 button');
+            alertCloseButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    this.closest('div[class^="bg-"]').remove();
+                });
+            });
+
+            // Handle location selection
+            const locationCards = document.querySelectorAll('.location-card');
+            locationCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    // Remove selected class from all location cards
+                    locationCards.forEach(c => c.classList.remove('selected'));
+                    // Add selected class to clicked card
+                    card.classList.add('selected');
+                    // Store the selected location ID
+                    const locationId = card.getAttribute('data-location-id');
+                    document.querySelector('#createServerForm').setAttribute('data-selected-location', locationId);
+                });
+            });
+
+            // Handle software selection
+            const imageCards = document.querySelectorAll('.image-card');
+            imageCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    // Remove selected class from all image cards
+                    imageCards.forEach(c => c.classList.remove('selected'));
+                    // Add selected class to clicked card
+                    card.classList.add('selected');
+                    // Store the selected software name
+                    const softwareName = card.querySelector('h3').textContent;
+                    document.querySelector('#createServerForm').setAttribute('data-selected-software', softwareName);
+                });
+            });
             
-            cards.forEach(card => {
-                const name = card.getAttribute('data-name');
-                const category = card.getAttribute('data-category').toLowerCase();
-                const isVisible = name.includes(searchTerm) || category.includes(searchTerm);
-                card.style.display = isVisible ? 'flex' : 'none';
+            // Search functionality
+            const searchInput = document.getElementById('image-search');
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                const cards = document.querySelectorAll('.image-card');
+                
+                cards.forEach(card => {
+                    const name = card.getAttribute('data-name');
+                    const category = card.getAttribute('data-category').toLowerCase();
+                    const isVisible = name.includes(searchTerm) || category.includes(searchTerm);
+                    card.style.display = isVisible ? 'flex' : 'none';
+                });
             });
         });
 
         function submitForm() {
-                    const form = document.getElementById('createServerForm');
+            const form = document.getElementById('createServerForm');
             const selectedLocation = form.getAttribute('data-selected-location');
             const selectedSoftware = form.getAttribute('data-selected-software');
             
             if (!selectedLocation || !selectedSoftware) {
-                alertify.error('Please select both a location and server software.');
-                            return;
+                // Show error message
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'bg-red-500/10 border border-red-500/30 rounded-xl p-4 mb-6 flex items-center justify-between animate-fade-in shadow-lg';
+                errorDiv.innerHTML = `
+                    <div class="flex items-center">
+                        <i class="fas fa-exclamation-circle text-red-400 mr-3 text-xl"></i>
+                        <span class="text-red-400">Please select both a location and server software.</span>
+                    </div>
+                    <button class="text-red-400 hover:text-red-300 transition-all">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                
+                // Insert at the top of the form
+                form.parentNode.insertBefore(errorDiv, form);
+                
+                // Add event listener to close button
+                errorDiv.querySelector('button').addEventListener('click', function() {
+                    errorDiv.remove();
+                });
+                
+                // Scroll to the top
+                window.scrollTo({top: 0, behavior: 'smooth'});
+                
+                return;
             }
 
             // Create hidden inputs for location and software
@@ -254,6 +354,6 @@
             form.action = '/servers/create';
             form.submit();
         }
-        </script>
+    </script>
 </body>
-    </html>
+</html>

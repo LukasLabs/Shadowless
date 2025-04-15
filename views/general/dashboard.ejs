@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title><%= settings.name %></title>
+    <title><%= settings.name %> - Dashboard</title>
     <link rel="icon" type="image/png" href="https://i.imgur.com/GY3cXet.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
@@ -15,9 +15,24 @@
         .animate-fade-in {
             animation: fadeIn 0.3s ease-out forwards;
         }
+        .shadow-glow {
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+        }
+        .gradient-text {
+            background: linear-gradient(45deg, #6366f1, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .bg-grid {
+            background-image: radial-gradient(rgba(99, 102, 241, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .card-hover:hover {
+            transform: translateY(-3px);
+        }
     </style>
 </head>
-<body class="bg-[#0F0F0F] text-white min-h-screen">
+<body class="bg-black text-white min-h-screen">
     <div class="flex">
         <!-- Sidebar -->
         <%- include('../components/navigation') %>
@@ -25,37 +40,46 @@
         <!-- Main Content -->
         <main class="flex-1 ml-72 p-8">
             <!-- Welcome Section -->
-            <div class="relative rounded-2xl overflow-hidden mb-8 animate-fade-in">
-                <div class="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20 backdrop-blur-sm"></div>
+            <div class="relative rounded-2xl overflow-hidden mb-8 animate-fade-in shadow-glow">
+                <div class="absolute inset-0 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 backdrop-blur-sm bg-grid"></div>
                 <div class="relative p-8">
-                    <h1 class="text-4xl font-bold mb-2">Welcome back, <%= req.session.userinfo.username %>!</h1>
-                    <p class="text-gray-400">Manage your servers and resources here.</p>
+                    <h1 class="text-4xl font-bold mb-2 gradient-text">Welcome back, <%= req.session.userinfo.username %>!</h1>
+                    <p class="text-gray-300">Manage your servers and resources from your personalized dashboard.</p>
                 </div>
             </div>
 
             <!-- Alerts -->
             <% if (req.query.err === "CANNOTAFFORDRENEWAL") { %>
-            <div class="bg-red-500/10 border border-red-500/20 rounded-xl p-4 mb-6 flex items-center justify-between animate-fade-in">
-                <span class="text-red-400">You need at least <%= settings.renewals.cost %> coins to purchase a server renewal!</span>
-                <button class="text-red-400 hover:text-red-300">
+            <div class="bg-red-500/10 border border-red-500/30 rounded-xl p-4 mb-6 flex items-center justify-between animate-fade-in shadow-lg">
+                <div class="flex items-center">
+                    <i class="fas fa-exclamation-circle text-red-400 mr-3 text-xl"></i>
+                    <span class="text-red-400">You need at least <%= settings.renewals.cost %> coins to purchase a server renewal!</span>
+                </div>
+                <button class="text-red-400 hover:text-red-300 transition-all">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <% } %>
             
             <% if (req.query.err == 'DELETED') { %>
-            <div class="bg-green-500/10 border border-green-500/20 rounded-xl p-4 mb-6 flex items-center justify-between animate-fade-in">
-                <span class="text-green-400">Success! Your server has been deleted, feel free to create a new one now!</span>
-                <button class="text-green-400 hover:text-green-300">
+            <div class="bg-green-500/10 border border-green-500/30 rounded-xl p-4 mb-6 flex items-center justify-between animate-fade-in shadow-lg">
+                <div class="flex items-center">
+                    <i class="fas fa-check-circle text-green-400 mr-3 text-xl"></i>
+                    <span class="text-green-400">Success! Your server has been deleted, feel free to create a new one now!</span>
+                </div>
+                <button class="text-green-400 hover:text-green-300 transition-all">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <% } %>
             
             <% if (req.query.success === 'RENEWED') { %>
-            <div class="bg-green-500/10 border border-green-500/20 rounded-xl p-4 mb-6 flex items-center justify-between animate-fade-in">
-                <span class="text-green-400">Successfully purchased renewal for server!</span>
-                <button class="text-green-400 hover:text-green-300">
+            <div class="bg-green-500/10 border border-green-500/30 rounded-xl p-4 mb-6 flex items-center justify-between animate-fade-in shadow-lg">
+                <div class="flex items-center">
+                    <i class="fas fa-check-circle text-green-400 mr-3 text-xl"></i>
+                    <span class="text-green-400">Successfully purchased renewal for server!</span>
+                </div>
+                <button class="text-green-400 hover:text-green-300 transition-all">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -63,7 +87,11 @@
 
             <!-- Announcements -->
             <% if (settings.announcements && settings.announcements.enabled) { %>
-            <div class="bg-[#1A1A1A] rounded-xl p-4 mb-6 animate-fade-in">
+            <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl p-5 mb-6 animate-fade-in shadow-lg">
+                <div class="flex items-center space-x-3 mb-2">
+                    <i class="fas fa-bullhorn text-indigo-400"></i>
+                    <h3 class="font-semibold text-indigo-400">Announcement</h3>
+                </div>
                 <p class="text-gray-300"><%= settings.announcements.message %></p>
             </div>
             <% } %>
@@ -99,65 +127,89 @@
                 const cpuPercentage = getPercentage(cpu, totalCPU);
                 
                 const getBarColor = (percentage) => {
-                    if (percentage < 50) return "bg-green-500";
+                    if (percentage < 50) return "bg-indigo-500";
                     if (percentage < 75) return "bg-yellow-500";
                     return "bg-red-500";
                 };
                 %>
 
                 <!-- Server Slots -->
-                <div class="bg-[#1A1A1A] rounded-xl p-6 hover:bg-[#242424] transition-all duration-200 animate-fade-in">
+                <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl p-6 hover:bg-gray-900/90 transition-all duration-300 animate-fade-in card-hover shadow-lg">
                     <div class="flex items-center justify-between mb-4">
                         <div class="flex items-center space-x-3">
-                            <i class="fas fa-server text-blue-500"></i>
-                            <span class="text-gray-400">Server Slots</span>
+                            <div class="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center">
+                                <i class="fas fa-server text-indigo-500"></i>
+                            </div>
+                            <span class="text-gray-300">Server Slots</span>
                         </div>
-                        <span class="text-2xl font-bold"><%= serversRemaining %></span>
+                        <span class="text-2xl font-bold gradient-text"><%= serversRemaining %></span>
                     </div>
-                    <div class="w-full h-2 bg-[#242424] rounded-full overflow-hidden">
+                    <div class="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
                         <div class="h-full transition-all duration-500" data-width="<%= serversPercentage %>" data-color="<%= getBarColor(serversPercentage) %>"></div>
+                    </div>
+                    <div class="flex justify-between mt-2 text-xs text-gray-400">
+                        <span>Used: <%= serversUsed %></span>
+                        <span>Total: <%= totalServers %></span>
                     </div>
                 </div>
 
                 <!-- RAM -->
-                <div class="bg-[#1A1A1A] rounded-xl p-6 hover:bg-[#242424] transition-all duration-200 animate-fade-in">
+                <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl p-6 hover:bg-gray-900/90 transition-all duration-300 animate-fade-in card-hover shadow-lg">
                     <div class="flex items-center justify-between mb-4">
                         <div class="flex items-center space-x-3">
-                            <i class="fas fa-memory text-purple-500"></i>
-                            <span class="text-gray-400">Available RAM</span>
+                            <div class="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
+                                <i class="fas fa-memory text-purple-500"></i>
+                            </div>
+                            <span class="text-gray-300">Available RAM</span>
                         </div>
-                        <span class="text-2xl font-bold"><%= (availableRAM / 1024).toFixed(1) %> GB</span>
+                        <span class="text-2xl font-bold gradient-text"><%= (availableRAM / 1024).toFixed(1) %> GB</span>
                     </div>
-                    <div class="w-full h-2 bg-[#242424] rounded-full overflow-hidden">
+                    <div class="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
                         <div class="h-full transition-all duration-500" data-width="<%= ramPercentage %>" data-color="<%= getBarColor(ramPercentage) %>"></div>
+                    </div>
+                    <div class="flex justify-between mt-2 text-xs text-gray-400">
+                        <span>Used: <%= (ram / 1024).toFixed(1) %> GB</span>
+                        <span>Total: <%= (totalRAM / 1024).toFixed(1) %> GB</span>
                     </div>
                 </div>
 
                 <!-- CPU -->
-                <div class="bg-[#1A1A1A] rounded-xl p-6 hover:bg-[#242424] transition-all duration-200 animate-fade-in">
+                <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl p-6 hover:bg-gray-900/90 transition-all duration-300 animate-fade-in card-hover shadow-lg">
                     <div class="flex items-center justify-between mb-4">
                         <div class="flex items-center space-x-3">
-                            <i class="fas fa-microchip text-green-500"></i>
-                            <span class="text-gray-400">Available CPU</span>
+                            <div class="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
+                                <i class="fas fa-microchip text-blue-500"></i>
+                            </div>
+                            <span class="text-gray-300">Available CPU</span>
                         </div>
-                        <span class="text-2xl font-bold"><%= availableCPU %>%</span>
+                        <span class="text-2xl font-bold gradient-text"><%= availableCPU %>%</span>
                     </div>
-                    <div class="w-full h-2 bg-[#242424] rounded-full overflow-hidden">
+                    <div class="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
                         <div class="h-full transition-all duration-500" data-width="<%= cpuPercentage %>" data-color="<%= getBarColor(cpuPercentage) %>"></div>
+                    </div>
+                    <div class="flex justify-between mt-2 text-xs text-gray-400">
+                        <span>Used: <%= cpu %>%</span>
+                        <span>Total: <%= totalCPU %>%</span>
                     </div>
                 </div>
 
                 <!-- Disk -->
-                <div class="bg-[#1A1A1A] rounded-xl p-6 hover:bg-[#242424] transition-all duration-200 animate-fade-in">
+                <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl p-6 hover:bg-gray-900/90 transition-all duration-300 animate-fade-in card-hover shadow-lg">
                     <div class="flex items-center justify-between mb-4">
                         <div class="flex items-center space-x-3">
-                            <i class="fas fa-hdd text-yellow-500"></i>
-                            <span class="text-gray-400">Available Disk</span>
+                            <div class="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center">
+                                <i class="fas fa-hdd text-amber-500"></i>
+                            </div>
+                            <span class="text-gray-300">Available Disk</span>
                         </div>
-                        <span class="text-2xl font-bold"><%= (availableDisk / 1024).toFixed(1) %> GB</span>
+                        <span class="text-2xl font-bold gradient-text"><%= (availableDisk / 1024).toFixed(1) %> GB</span>
                     </div>
-                    <div class="w-full h-2 bg-[#242424] rounded-full overflow-hidden">
+                    <div class="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
                         <div class="h-full transition-all duration-500" data-width="<%= diskPercentage %>" data-color="<%= getBarColor(diskPercentage) %>"></div>
+                    </div>
+                    <div class="flex justify-between mt-2 text-xs text-gray-400">
+                        <span>Used: <%= (disk / 1024).toFixed(1) %> GB</span>
+                        <span>Total: <%= (totalDisk / 1024).toFixed(1) %> GB</span>
                     </div>
                 </div>
             </div>
@@ -165,67 +217,107 @@
             <!-- Servers Section -->
             <div class="mb-8">
                 <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-2xl font-bold">Your Servers</h2>
-                    <a href="/servers/new" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-all duration-200 flex items-center space-x-2">
+                    <h2 class="text-2xl font-bold gradient-text">Your Servers</h2>
+                    <a href="/servers/new" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg transition-all duration-300 flex items-center space-x-2 shadow-lg shadow-indigo-500/20">
                         <i class="fas fa-plus"></i>
                         <span>Create Server</span>
                     </a>
                 </div>
 
                 <% if (pterodactyl.relationships.servers.data.length == 0) { %>
-                <div class="bg-[#1A1A1A] rounded-xl p-8 text-center animate-fade-in">
-                    <img src="/assets/empty.svg" class="w-32 h-32 mx-auto mb-4" alt="No servers">
-                    <h3 class="text-xl font-semibold mb-2">No servers yet</h3>
-                    <p class="text-gray-400 mb-4">Create your first server to get started!</p>
-                    <a href="/servers/new" class="inline-block bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg transition-all duration-200">
-                        Create Server
+                <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl p-12 text-center animate-fade-in shadow-lg">
+                    <div class="w-24 h-24 rounded-full bg-indigo-500/10 flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-server text-indigo-400 text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3 gradient-text">No servers yet</h3>
+                    <p class="text-gray-400 mb-6 max-w-md mx-auto">You haven't created any servers yet. Create your first server to get started with your Minecraft hosting journey!</p>
+                    <a href="/servers/new" class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-lg transition-all duration-300 shadow-lg shadow-indigo-500/20">
+                        <i class="fas fa-plus mr-2"></i> Create Your First Server
                     </a>
                 </div>
                 <% } else { %>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <% for (let i = 0, len = pterodactyl.relationships.servers.data.length; i < len; i++) { %>
-                    <div class="bg-[#1A1A1A] rounded-xl overflow-hidden hover:bg-[#242424] transition-all duration-200 animate-fade-in">
-                        <div class="relative h-32 bg-gradient-to-r from-blue-600/20 to-purple-600/20">
-                            <div class="absolute inset-0 bg-[url('/assets/bgimage.png')] bg-cover bg-center opacity-20"></div>
-                            <div class="relative p-4">
-                                <h3 class="text-xl font-semibold truncate"><%= pterodactyl.relationships.servers.data[i].attributes.name %></h3>
-                                <p class="text-gray-400 text-sm truncate">
-                                    <%= pterodactyl.relationships.servers.data[i].attributes.description || "No description" %>
-                                </p>
+                    <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl overflow-hidden hover:bg-gray-900/90 transition-all duration-300 animate-fade-in card-hover shadow-lg">
+                        <div class="relative h-32 bg-gradient-to-r from-indigo-600/20 to-purple-600/20">
+                            <div class="absolute inset-0 bg-[url('/assets/bgimage.png')] bg-cover bg-center opacity-20 bg-grid"></div>
+                            <div class="absolute top-4 right-4">
+                                <span class="px-2 py-1 bg-black/40 backdrop-blur-sm rounded-md text-xs text-indigo-300 border border-indigo-500/30">
+                                    <i class="fas fa-signal mr-1"></i> Online
+                                </span>
+                            </div>
+                            <div class="relative p-4 flex flex-col h-full justify-between">
+                                <div>
+                                    <h3 class="text-xl font-semibold truncate text-white"><%= pterodactyl.relationships.servers.data[i].attributes.name %></h3>
+                                    <p class="text-gray-300 text-sm truncate">
+                                        <%= pterodactyl.relationships.servers.data[i].attributes.description || "No description" %>
+                                    </p>
+                                </div>
+                                <div class="flex items-center text-xs text-gray-400">
+                                    <i class="fas fa-hdd mr-1"></i> Node 1
+                                </div>
                             </div>
                         </div>
                         <div class="p-4">
-                            <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div class="grid grid-cols-2 gap-4 mb-5">
                                 <div class="flex items-center space-x-2">
-                                    <i class="fas fa-microchip text-green-500"></i>
-                                    <span class="text-sm"><%= pterodactyl.relationships.servers.data[i].attributes.limits.cpu %>% CPU</span>
+                                    <div class="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                                        <i class="fas fa-microchip text-blue-500 text-xs"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-xs text-gray-400">CPU</div>
+                                        <div class="text-sm"><%= pterodactyl.relationships.servers.data[i].attributes.limits.cpu %>%</div>
+                                    </div>
                                 </div>
                                 <div class="flex items-center space-x-2">
-                                    <i class="fas fa-memory text-purple-500"></i>
-                                    <span class="text-sm"><%= pterodactyl.relationships.servers.data[i].attributes.limits.memory %> MB RAM</span>
+                                    <div class="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center">
+                                        <i class="fas fa-memory text-purple-500 text-xs"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-xs text-gray-400">RAM</div>
+                                        <div class="text-sm"><%= (pterodactyl.relationships.servers.data[i].attributes.limits.memory / 1024).toFixed(1) %> GB</div>
+                                    </div>
                                 </div>
                                 <div class="flex items-center space-x-2">
-                                    <i class="fas fa-hdd text-yellow-500"></i>
-                                    <span class="text-sm"><%= pterodactyl.relationships.servers.data[i].attributes.limits.disk %> MB Disk</span>
+                                    <div class="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
+                                        <i class="fas fa-hdd text-amber-500 text-xs"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-xs text-gray-400">DISK</div>
+                                        <div class="text-sm"><%= (pterodactyl.relationships.servers.data[i].attributes.limits.disk / 1024).toFixed(1) %> GB</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center">
+                                        <i class="fas fa-network-wired text-green-500 text-xs"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-xs text-gray-400">TYPE</div>
+                                        <div class="text-sm">Minecraft</div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="flex space-x-2">
+                            <div class="grid grid-cols-4 gap-2">
                                 <a href="/renew?id=<%= pterodactyl.relationships.servers.data[i].attributes.id %>" 
-                                   class="flex-1 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 px-3 py-2 rounded-lg text-sm text-center transition-all duration-200">
-                                    <i class="fas fa-sync-alt mr-1"></i> Renew
+                                   class="bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 p-2 rounded-lg text-sm text-center transition-all duration-200 border border-indigo-500/20 hover:border-indigo-500/40 flex flex-col items-center">
+                                    <i class="fas fa-sync-alt mb-1"></i>
+                                    <span class="text-xs">Renew</span>
                                 </a>
                                 <a href="/edit?id=<%= pterodactyl.relationships.servers.data[i].attributes.id %>" 
-                                   class="flex-1 bg-gray-500/10 hover:bg-gray-500/20 text-gray-400 px-3 py-2 rounded-lg text-sm text-center transition-all duration-200">
-                                    <i class="fas fa-edit mr-1"></i> Edit
+                                   class="bg-gray-500/10 hover:bg-gray-500/20 text-gray-400 p-2 rounded-lg text-sm text-center transition-all duration-200 border border-gray-500/20 hover:border-gray-500/40 flex flex-col items-center">
+                                    <i class="fas fa-edit mb-1"></i>
+                                    <span class="text-xs">Edit</span>
                                 </a>
                                 <a href="<%= settings.pterodactyl.domain %>/server/<%= pterodactyl.relationships.servers.data[i].attributes.uuid %>" 
                                    target="_blank" 
-                                   class="flex-1 bg-green-500/10 hover:bg-green-500/20 text-green-400 px-3 py-2 rounded-lg text-sm text-center transition-all duration-200">
-                                    <i class="fas fa-external-link-alt mr-1"></i> Open
+                                   class="bg-green-500/10 hover:bg-green-500/20 text-green-400 p-2 rounded-lg text-sm text-center transition-all duration-200 border border-green-500/20 hover:border-green-500/40 flex flex-col items-center">
+                                    <i class="fas fa-external-link-alt mb-1"></i>
+                                    <span class="text-xs">Console</span>
                                 </a>
                                 <a href="/delete?id=<%= pterodactyl.relationships.servers.data[i].attributes.id %>" 
-                                   class="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-400 px-3 py-2 rounded-lg text-sm text-center transition-all duration-200">
-                                    <i class="fas fa-trash-alt mr-1"></i> Delete
+                                   class="bg-red-500/10 hover:bg-red-500/20 text-red-400 p-2 rounded-lg text-sm text-center transition-all duration-200 border border-red-500/20 hover:border-red-500/40 flex flex-col items-center">
+                                    <i class="fas fa-trash-alt mb-1"></i>
+                                    <span class="text-xs">Delete</span>
                                 </a>
                             </div>
                         </div>
@@ -239,12 +331,24 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize progress bars with animation
             const progressBars = document.querySelectorAll('[data-width]');
-            progressBars.forEach(bar => {
-                const width = bar.getAttribute('data-width');
-                const color = bar.getAttribute('data-color');
-                bar.style.width = `${width}%`;
-                bar.style.backgroundColor = color;
+            setTimeout(() => {
+                progressBars.forEach(bar => {
+                    const width = bar.getAttribute('data-width');
+                    const color = bar.getAttribute('data-color');
+                    bar.style.width = `${width}%`;
+                    bar.style.backgroundColor = color;
+                    bar.classList.add('transition-all', 'duration-1000');
+                });
+            }, 300);
+            
+            // Initialize close buttons for alerts
+            const alertCloseButtons = document.querySelectorAll('.bg-red-500/10 button, .bg-green-500/10 button');
+            alertCloseButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    this.closest('div[class^="bg-"]').remove();
+                });
             });
         });
     </script>

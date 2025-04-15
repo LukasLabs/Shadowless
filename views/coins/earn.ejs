@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Earn - <%= settings.name %></title>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title><%= settings.name %> - Earn</title>
+    <link rel="icon" type="image/png" href="https://i.imgur.com/GY3cXet.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
     <style>
@@ -14,75 +15,169 @@
         .animate-fade-in {
             animation: fadeIn 0.3s ease-out forwards;
         }
+        .shadow-glow {
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+        }
+        .gradient-text {
+            background: linear-gradient(45deg, #6366f1, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .bg-grid {
+            background-image: radial-gradient(rgba(99, 102, 241, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .card-hover:hover {
+            transform: translateY(-3px);
+        }
     </style>
 </head>
-<body class="bg-[#0F0F0F] text-white min-h-screen">
+<body class="bg-black text-white min-h-screen">
     <div class="flex">
         <!-- Sidebar -->
         <%- include('../components/navigation') %>
         
         <!-- Main Content -->
         <main class="flex-1 ml-72 p-8">
-            <!-- Header -->
-            <div class="flex items-center justify-between mb-8">
-                <div>
-                    <h1 class="text-3xl font-bold mb-2">AFK Page</h1>
-                    <p class="text-gray-400">Earn free rewards for keeping this page open</p>
-                </div>
-                <div class="flex items-center space-x-3 p-3 rounded-xl bg-[#1A1A1A]">
-                    <i class="fas fa-coins text-yellow-500"></i>
-                    <span class="font-medium"><%= coins %> <%= settings.api.client.coins.name %></span>
+            <!-- Welcome Section -->
+            <div class="relative rounded-2xl overflow-hidden mb-8 animate-fade-in shadow-glow">
+                <div class="absolute inset-0 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 backdrop-blur-sm bg-grid"></div>
+                <div class="relative p-8">
+                    <h1 class="text-4xl font-bold mb-2 gradient-text">Earn Resources</h1>
+                    <p class="text-gray-300">Earn free coins and resources by completing tasks and staying active.</p>
                 </div>
             </div>
 
-            <!-- AFK Content -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- AFK Timer Card -->
-                <div class="bg-[#1A1A1A] rounded-xl p-6 animate-fade-in">
-                    <div class="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center mb-4">
-                        <i class="fas fa-clock text-blue-500 text-xl"></i>
+            <!-- Earning Methods -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <!-- AFK Earning Card -->
+                <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl p-6 hover:bg-gray-900/90 transition-all duration-300 animate-fade-in card-hover shadow-lg">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center">
+                                <i class="fas fa-clock text-indigo-500 text-xl"></i>
+                            </div>
+                            <span class="text-xl font-semibold gradient-text">AFK Rewards</span>
+                        </div>
                     </div>
-                    <h2 class="text-xl font-bold mb-2">AFK Timer</h2>
-                    <p class="text-gray-400 mb-6">Earn <%= settings.coinname %> for free, by leaving this page open.</p>
                     
-                    <div class="flex space-x-4 mb-6">
-                        <div class="flex-1 p-4 rounded-xl bg-[#242424]">
-                            <div class="text-2xl font-bold text-blue-500" id="afk-time">0</div>
-                            <div class="text-sm text-gray-400">Seconds</div>
+                    <p class="text-gray-300 mb-6">Earn coins automatically by keeping this page open in your browser.</p>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="bg-gray-800/80 rounded-xl p-4 text-center">
+                            <div class="text-3xl font-bold text-indigo-400 mb-1" id="afk-time">0</div>
+                            <div class="text-xs text-gray-400">Seconds AFK</div>
                         </div>
-                        <div class="flex-1 p-4 rounded-xl bg-[#242424]">
-                            <div class="text-2xl font-bold text-yellow-500" id="sessionEarn">0</div>
-                            <div class="text-sm text-gray-400">Coins Earned</div>
+                        <div class="bg-gray-800/80 rounded-xl p-4 text-center">
+                            <div class="text-3xl font-bold text-yellow-400 mb-1" id="sessionEarn">0</div>
+                            <div class="text-xs text-gray-400">Coins Earned</div>
                         </div>
                     </div>
-
-                    <div class="text-sm text-gray-400">
-                        <i class="fas fa-info-circle mr-2"></i>
-                        You earn <%= settings.api.afk.coins %> coins per minute while AFK
+                    
+                    <div class="bg-indigo-500/10 border border-indigo-500/20 rounded-lg p-3 flex items-center">
+                        <i class="fas fa-info-circle text-indigo-400 mr-3"></i>
+                        <span class="text-sm text-gray-300">You earn <span class="text-indigo-400 font-semibold"><%= settings.api.afk.coins %></span> coins per minute while AFK</span>
                     </div>
                 </div>
 
                 <!-- Linkvertise Card -->
-                <div class="bg-[#1A1A1A] rounded-xl p-6 animate-fade-in">
-                    <div class="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center mb-4">
-                        <i class="fas fa-link text-purple-500 text-xl"></i>
-                    </div>
-                    <h2 class="text-xl font-bold mb-2">Linkvertise</h2>
-                    <p class="text-gray-400 mb-4">Complete Linkvertise links to earn additional coins</p>
-                    
-                    <div class="mb-6">
-                        <div class="text-2xl font-bold text-purple-500 mb-2" id="usedToday">0</div>
-                        <p class="text-sm text-gray-400">Links completed today</p>
-                    </div>
-
-                    <div class="space-y-4">
-                        <div class="flex items-center space-x-2 text-gray-400">
-                            <i class="fas fa-coins text-yellow-500"></i>
-                            <span>Earn <%= settings.linkvertise.coins %> <%= settings.coinname %> per link</span>
+                <div class="bg-gray-900/80 border border-purple-500/20 rounded-xl p-6 hover:bg-gray-900/90 transition-all duration-300 animate-fade-in card-hover shadow-lg">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center">
+                                <i class="fas fa-link text-purple-500 text-xl"></i>
+                            </div>
+                            <span class="text-xl font-semibold" style="background: linear-gradient(45deg, #8b5cf6, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Linkvertise</span>
                         </div>
-                        <a href="./lv" target="_blank" class="block w-full py-3 rounded-xl bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-semibold text-center transition-all duration-300 shadow-lg hover:shadow-purple-500/20">
-                            Go to Linkvertise
-                        </a>
+                    </div>
+                    
+                    <p class="text-gray-300 mb-6">Complete Linkvertise links to earn additional coins for your account.</p>
+                    
+                    <div class="bg-gray-800/80 rounded-xl p-4 text-center mb-6">
+                        <div class="text-3xl font-bold text-purple-400 mb-1" id="usedToday">0</div>
+                        <div class="text-xs text-gray-400">Links Completed Today</div>
+                    </div>
+                    
+                    <div class="bg-purple-500/10 border border-purple-500/20 rounded-lg p-3 mb-6 flex items-center">
+                        <i class="fas fa-coins text-purple-400 mr-3"></i>
+                        <span class="text-sm text-gray-300">Earn <span class="text-purple-400 font-semibold"><%= settings.linkvertise.coins %></span> <%= settings.coinname %> per completed link</span>
+                    </div>
+                    
+                    <a href="./lv/gen" target="_blank" class="block w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold text-center transition-all duration-300 shadow-lg hover:shadow-purple-500/30">
+                        <i class="fas fa-external-link-alt mr-2"></i> Go to Linkvertise
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Earnings Stats Section -->
+            <div class="mb-8">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold gradient-text">Earnings Statistics</h2>
+                </div>
+                
+                <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl p-6 animate-fade-in shadow-lg">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-gray-800/80 rounded-xl p-4 text-center">
+                            <div class="w-12 h-12 rounded-full bg-green-500/10 flex items-center justify-center mx-auto mb-3">
+                                <i class="fas fa-coins text-green-400"></i>
+                            </div>
+                            <div class="text-2xl font-bold text-green-400 mb-1" id="totalEarned"><%= coins %></div>
+                            <div class="text-xs text-gray-400">Total <%= settings.coinname %></div>
+                        </div>
+                        
+                        <div class="bg-gray-800/80 rounded-xl p-4 text-center">
+                            <div class="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center mx-auto mb-3">
+                                <i class="fas fa-clock text-blue-400"></i>
+                            </div>
+                            <div class="text-2xl font-bold text-blue-400 mb-1" id="totalTime">0</div>
+                            <div class="text-xs text-gray-400">Total AFK Time</div>
+                        </div>
+                        
+                        <div class="bg-gray-800/80 rounded-xl p-4 text-center">
+                            <div class="w-12 h-12 rounded-full bg-purple-500/10 flex items-center justify-center mx-auto mb-3">
+                                <i class="fas fa-link text-purple-400"></i>
+                            </div>
+                            <div class="text-2xl font-bold text-purple-400 mb-1" id="totalLinks">0</div>
+                            <div class="text-xs text-gray-400">Total Links Completed</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Ways to Use Coins -->
+            <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl overflow-hidden animate-fade-in shadow-lg">
+                <div class="p-6">
+                    <h3 class="text-xl font-bold mb-4 gradient-text">Ways to Use Your Coins</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-gray-800/80 rounded-xl p-4 hover:bg-gray-800/90 transition-all duration-300">
+                            <div class="flex items-center space-x-3 mb-3">
+                                <div class="w-10 h-10 rounded-lg bg-indigo-500/10 flex items-center justify-center">
+                                    <i class="fas fa-server text-indigo-400"></i>
+                                </div>
+                                <span class="font-semibold text-indigo-400">Server Resources</span>
+                            </div>
+                            <p class="text-sm text-gray-400">Upgrade your server with more RAM, CPU, and storage.</p>
+                        </div>
+                        
+                        <div class="bg-gray-800/80 rounded-xl p-4 hover:bg-gray-800/90 transition-all duration-300">
+                            <div class="flex items-center space-x-3 mb-3">
+                                <div class="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center">
+                                    <i class="fas fa-sync-alt text-purple-400"></i>
+                                </div>
+                                <span class="font-semibold text-purple-400">Server Renewals</span>
+                            </div>
+                            <p class="text-sm text-gray-400">Keep your servers online by purchasing renewals.</p>
+                        </div>
+                        
+                        <div class="bg-gray-800/80 rounded-xl p-4 hover:bg-gray-800/90 transition-all duration-300">
+                            <div class="flex items-center space-x-3 mb-3">
+                                <div class="w-10 h-10 rounded-lg bg-pink-500/10 flex items-center justify-center">
+                                    <i class="fas fa-gift text-pink-400"></i>
+                                </div>
+                                <span class="font-semibold text-pink-400">Premium Features</span>
+                            </div>
+                            <p class="text-sm text-gray-400">Unlock premium features and exclusive perks.</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -90,44 +185,65 @@
     </div>
 
     <script>
-        // WebSocket Connection
-        const coinsPerMinute = '<%= settings.api.afk.coins %>';
-        let totalCoins = 0;
+        // AFK Time Counter
         let afkTime = 0;
-
-        function connect() {
-            const socket = new WebSocket(`${window.location.href.startsWith("https://") ? "wss" : "ws"}://${window.location.host}/earn/ws`);
-
-            socket.onopen = () => {
-                console.log("WebSocket connection opened");
-            };
-
-            socket.onmessage = (event) => {
-                let data = JSON.parse(event.data);
-                if (data.type === "coin") {
-                    totalCoins += parseInt(coinsPerMinute, 10);
-                    document.getElementById("sessionEarn").innerText = `${totalCoins}`;
-                }
-            };
-
-            socket.onclose = (event) => {
-                document.getElementById("sessionEarn").innerText = `Connection closed`;
-                if (event.wasClean) {
-                    console.error(`WebSocket connection closed cleanly, code=${event.code}`);
-                } else {
-                    console.error('WebSocket connection closed abruptly');
-                }
-                setTimeout(connect, 5000);
-            };
-        }
-
-        // AFK Timer
+        let totalCoins = 0;
         let afkInterval = setInterval(() => {
             afkTime++;
             document.getElementById("afk-time").textContent = `${afkTime}`;
+            // Update formatted total time for stats section
+            const hours = Math.floor(afkTime / 3600);
+            const minutes = Math.floor((afkTime % 3600) / 60);
+            const seconds = afkTime % 60;
+            document.getElementById("totalTime").textContent = `${hours}h ${minutes}m ${seconds}s`;
         }, 1000);
-
-        connect();
+        
+        // WebSocket Connection for AFK rewards
+        function connect() {
+            const socket = new WebSocket(`${window.location.href.startsWith("https://") ? "wss" : "ws"}://${window.location.host}/earn/ws`);
+            
+            socket.onopen = () => {
+                console.log("WebSocket connection opened");
+            };
+            
+            socket.onmessage = (event) => {
+                let data = JSON.parse(event.data);
+                if (data.type === "coin") {
+                    totalCoins += parseInt('<%= settings.api.afk.coins %>', 10);
+                    document.getElementById("sessionEarn").innerText = `${totalCoins}`;
+                    // Update total coins display too
+                    const currentTotal = parseInt(document.getElementById("totalEarned").innerText);
+                    document.getElementById("totalEarned").innerText = currentTotal + parseInt('<%= settings.api.afk.coins %>', 10);
+                }
+            };
+            
+            socket.onclose = (event) => {
+                if (event.wasClean) {
+                    console.log(`WebSocket connection closed cleanly, code=${event.code}`);
+                } else {
+                    console.error('WebSocket connection closed abruptly');
+                }
+                setTimeout(connect, 5000); // Attempt to reconnect after 5 seconds
+            };
+            
+            socket.onerror = (error) => {
+                console.error(`WebSocket error: ${error}`);
+            };
+        }
+        
+        // Initialize used today links count from server data
+        function initLinkvertiseData() {
+            // This would typically be set from server data
+            // For now just initializing to 0, replace with actual data when available
+            document.getElementById("usedToday").textContent = "0";
+            document.getElementById("totalLinks").textContent = "0";
+        }
+        
+        // Initialize everything on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            connect();
+            initLinkvertiseData();
+        });
     </script>
 </body>
 </html>
