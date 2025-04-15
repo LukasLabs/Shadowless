@@ -10,130 +10,242 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&display=swap');
+        
+        :root {
+            --bg-dark: #080808;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --accent: #9333ea;
+            --accent-light: #a855f7;
+            --border: #1f1f1f;
+        }
         
         * {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Syne', sans-serif;
         }
         
         body {
-            background-color: #0b0b0b;
-            color: #f5f5f5;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
         }
         
-        .purple-accent {
-            color: #8b5cf6;
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJhIiB4PSIwIiB5PSIwIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iLjc1IiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+PGZlQ29sb3JNYXRyaXggdHlwZT0ic2F0dXJhdGUiIHZhbHVlcz0iMCIvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWx0ZXI9InVybCgjYSkiIG9wYWNpdHk9Ii4wNSIvPjwvc3ZnPg==');
+            z-index: 0;
+            pointer-events: none;
         }
         
-        .btn-purple {
-            background-color: #8b5cf6;
+        .gradient-accent {
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+        }
+        
+        .text-gradient {
+            background: linear-gradient(90deg, #fff, #ccc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .display-font {
+            letter-spacing: -0.02em;
+        }
+        
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border), transparent);
+        }
+        
+        .text-shadow {
+            text-shadow: 0 0 40px rgba(147, 51, 234, 0.5);
+        }
+        
+        .glow {
+            box-shadow: 0 0 30px rgba(147, 51, 234, 0.15);
+        }
+        
+        .hover-translate {
+            transition: transform 0.3s ease;
+        }
+        
+        .hover-translate:hover {
+            transform: translateY(-4px);
+        }
+        
+        .hover-glow:hover {
+            box-shadow: 0 0 30px rgba(147, 51, 234, 0.3);
+        }
+        
+        .image-card {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .image-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, transparent 50%, var(--bg-dark));
+            z-index: 1;
+        }
+        
+        .neo-brutalism {
+            border: 2px solid #1a1a1a;
+            box-shadow: 4px 4px 0 #1a1a1a;
             transition: all 0.2s ease;
         }
         
-        .btn-purple:hover {
-            background-color: #7c3aed;
+        .neo-brutalism:hover {
+            box-shadow: 8px 8px 0 var(--accent);
+            transform: translate(-4px, -4px);
         }
         
-        .card {
-            background-color: #111111;
-            border: 1px solid #222222;
+        .circle-bg {
+            position: absolute;
+            width: 50vw;
+            height: 50vw;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(147, 51, 234, 0.08) 0%, rgba(147, 51, 234, 0) 70%);
+            filter: blur(60px);
+            z-index: -1;
+        }
+        
+        .stat-card {
+            position: relative;
+            overflow: hidden;
             transition: all 0.3s ease;
         }
         
-        .card:hover {
-            border-color: #7c3aed;
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(147, 51, 234, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
         
-        .subtle-shadow {
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        .stat-card:hover::after {
+            opacity: 1;
         }
     </style>
 </head>
-<body class="min-h-screen">
-    <main class="max-w-4xl mx-auto px-4 py-16 md:py-24">
-        <!-- Hero Section -->
-        <section class="mb-24 text-center">
-            <h1 class="text-5xl md:text-7xl font-bold mb-6 text-white tracking-tight">
-                Welcome to <span class="purple-accent"><%= settings.name %></span>
-            </h1>
-            <p class="text-xl text-gray-400 mb-10 max-w-2xl mx-auto">
-                Next-generation Minecraft server hosting with unparalleled performance
-            </p>
-            <div class="flex flex-col sm:flex-row justify-center gap-4">
-                <a href="/login" class="btn-purple px-8 py-4 rounded-md text-white font-medium">
-                    Get Started
-                </a>
-                <a href="#features" class="px-8 py-4 rounded-md text-gray-300 border border-gray-800 hover:border-purple-500 transition-colors duration-300">
-                    Explore Features
-                </a>
+<body class="relative">
+    <div class="noise"></div>
+    
+    <div class="circle-bg top-0 left-0 opacity-40"></div>
+    <div class="circle-bg bottom-0 right-0 opacity-30"></div>
+    
+    <main class="relative z-10 max-w-5xl mx-auto px-6 py-20 md:py-32">
+        <!-- Header -->
+        <header class="mb-24 md:mb-40">
+            <div class="flex flex-col items-center text-center">
+                <span class="inline-block mb-4 px-3 py-1 text-xs font-semibold tracking-widest uppercase text-purple-300 border border-purple-900 rounded-full">Next Generation</span>
+                
+                <h1 class="text-6xl md:text-8xl font-extrabold mb-8 display-font">
+                    <span class="text-gradient">Welcome to</span>
+                    <div class="text-purple-400 text-shadow"><%= settings.name %></div>
+                </h1>
+                
+                <p class="text-xl md:text-2xl text-gray-400 mb-12 max-w-2xl">
+                    Experience exceptional Minecraft server hosting with unmatched performance
+                </p>
+                
+                <div class="flex flex-col sm:flex-row justify-center gap-5">
+                    <a href="/login" class="neo-brutalism px-8 py-4 bg-purple-600 text-white font-bold rounded-lg hover:bg-purple-700 transition-colors">
+                        Get Started
+                    </a>
+                    <a href="#features" class="neo-brutalism px-8 py-4 bg-gray-900 text-white font-bold rounded-lg hover:bg-gray-800 transition-colors">
+                        Explore Features
+                    </a>
+                </div>
             </div>
-        </section>
+        </header>
         
         <!-- Features Section -->
-        <section id="features" class="mb-24">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="card rounded-lg p-8">
-                    <div class="w-12 h-12 rounded-lg flex items-center justify-center mb-6 bg-purple-900/10">
-                        <i class="fas fa-bolt text-purple-500"></i>
+        <section id="features" class="mb-32">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <div class="hover-translate hover-glow">
+                    <div class="rounded-xl bg-gray-900/50 border border-gray-800 p-10">
+                        <div class="w-14 h-14 rounded-xl gradient-accent flex items-center justify-center mb-8">
+                            <i class="fas fa-bolt text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4 text-white">Lightning Fast</h3>
+                        <p class="text-gray-400 leading-relaxed">
+                            Ultra-low latency and exceptional performance with cutting-edge infrastructure.
+                        </p>
                     </div>
-                    <h3 class="text-xl font-semibold mb-3 text-white">Lightning Fast</h3>
-                    <p class="text-gray-400 leading-relaxed">
-                        Ultra-low latency and superior performance with our optimized infrastructure.
-                    </p>
                 </div>
                 
-                <div class="card rounded-lg p-8">
-                    <div class="w-12 h-12 rounded-lg flex items-center justify-center mb-6 bg-purple-900/10">
-                        <i class="fas fa-shield-alt text-purple-500"></i>
+                <div class="hover-translate hover-glow">
+                    <div class="rounded-xl bg-gray-900/50 border border-gray-800 p-10">
+                        <div class="w-14 h-14 rounded-xl gradient-accent flex items-center justify-center mb-8">
+                            <i class="fas fa-shield-alt text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4 text-white">Enterprise Security</h3>
+                        <p class="text-gray-400 leading-relaxed">
+                            Advanced DDoS protection and automated backups for maximum security.
+                        </p>
                     </div>
-                    <h3 class="text-xl font-semibold mb-3 text-white">Enterprise Security</h3>
-                    <p class="text-gray-400 leading-relaxed">
-                        Advanced DDoS protection and automated backups for maximum security.
-                    </p>
                 </div>
                 
-                <div class="card rounded-lg p-8">
-                    <div class="w-12 h-12 rounded-lg flex items-center justify-center mb-6 bg-purple-900/10">
-                        <i class="fas fa-headset text-purple-500"></i>
+                <div class="hover-translate hover-glow">
+                    <div class="rounded-xl bg-gray-900/50 border border-gray-800 p-10">
+                        <div class="w-14 h-14 rounded-xl gradient-accent flex items-center justify-center mb-8">
+                            <i class="fas fa-headset text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4 text-white">24/7 Expert Support</h3>
+                        <p class="text-gray-400 leading-relaxed">
+                            Our dedicated team is always ready to help with any questions or issues.
+                        </p>
                     </div>
-                    <h3 class="text-xl font-semibold mb-3 text-white">24/7 Expert Support</h3>
-                    <p class="text-gray-400 leading-relaxed">
-                        Our dedicated team is always ready to help with any questions or issues.
-                    </p>
                 </div>
             </div>
         </section>
         
+        <div class="divider my-20"></div>
+        
         <!-- Stats Section -->
-        <section class="card rounded-lg p-8 mb-24 subtle-shadow">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                <div class="text-center">
-                    <div class="text-3xl font-bold text-white mb-1">99.9%</div>
-                    <div class="text-gray-500 text-sm">Uptime</div>
+        <section class="mb-32">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-10">
+                <div class="stat-card text-center">
+                    <div class="text-5xl font-bold text-white mb-3">99.9%</div>
+                    <div class="text-gray-500 uppercase text-sm font-medium tracking-wider">Uptime</div>
                 </div>
-                <div class="text-center">
-                    <div class="text-3xl font-bold text-white mb-1">24/7</div>
-                    <div class="text-gray-500 text-sm">Support</div>
+                
+                <div class="stat-card text-center">
+                    <div class="text-5xl font-bold text-white mb-3">24/7</div>
+                    <div class="text-gray-500 uppercase text-sm font-medium tracking-wider">Support</div>
                 </div>
-                <div class="text-center">
-                    <div class="text-3xl font-bold text-white mb-1">10K+</div>
-                    <div class="text-gray-500 text-sm">Players</div>
+                
+                <div class="stat-card text-center">
+                    <div class="text-5xl font-bold text-white mb-3">10K+</div>
+                    <div class="text-gray-500 uppercase text-sm font-medium tracking-wider">Players</div>
                 </div>
-                <div class="text-center">
-                    <div class="text-3xl font-bold text-white mb-1">10+</div>
-                    <div class="text-gray-500 text-sm">Locations</div>
+                
+                <div class="stat-card text-center">
+                    <div class="text-5xl font-bold text-white mb-3">10+</div>
+                    <div class="text-gray-500 uppercase text-sm font-medium tracking-wider">Locations</div>
                 </div>
             </div>
         </section>
         
         <!-- CTA Section -->
-        <section class="card rounded-lg p-8 subtle-shadow">
-            <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+        <section class="rounded-2xl bg-gray-900/50 border border-gray-800 p-12 glow relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-purple-900/20 rounded-full filter blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+            <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
                 <div>
-                    <h3 class="text-2xl font-semibold mb-2 text-white">Ready to start?</h3>
-                    <p class="text-gray-400">Create your Minecraft server in minutes.</p>
+                    <h3 class="text-3xl font-bold mb-3 text-white">Ready to start?</h3>
+                    <p class="text-gray-400 text-lg">Create your Minecraft server in minutes.</p>
                 </div>
-                <a href="/login" class="btn-purple px-8 py-4 rounded-md text-white font-medium whitespace-nowrap">
+                <a href="/login" class="neo-brutalism px-8 py-4 bg-purple-600 text-white font-bold rounded-lg whitespace-nowrap hover:bg-purple-700 transition-colors">
                     Create Server
                 </a>
             </div>
@@ -142,5 +254,18 @@
 
     <!-- Footer -->
     <%- include('components/footer') %>
+    
+    <script>
+        // Add subtle parallax effect to circular backgrounds
+        document.addEventListener('mousemove', (e) => {
+            const xAxis = (window.innerWidth / 2 - e.pageX) / 50;
+            const yAxis = (window.innerHeight / 2 - e.pageY) / 50;
+            
+            const circles = document.querySelectorAll('.circle-bg');
+            circles.forEach(circle => {
+                circle.style.transform = `translate(${xAxis}px, ${yAxis}px)`;
+            });
+        });
+    </script>
 </body>
 </html>
