@@ -175,6 +175,38 @@ module.exports.load = async function (app, db) {
           let disk = parseFloat(req.query.disk);
           let cpu = parseFloat(req.query.cpu);
           if (!isNaN(ram) && !isNaN(disk) && !isNaN(cpu)) {
+            // Check max resources if enabled
+            if (newsettings.api.client.maxResources.enabled) {
+              if (ram2 + ram > newsettings.api.client.maxResources.ram) {
+                cb();
+                return res.redirect(
+                  `${redirectlink}?err=EXCEEDMAXRAM&num=${
+                    newsettings.api.client.maxResources.ram - ram2
+                  }`
+                );
+              }
+              if (disk2 + disk > newsettings.api.client.maxResources.disk) {
+                cb();
+                return res.redirect(
+                  `${redirectlink}?err=EXCEEDMAXDISK&num=${
+                    newsettings.api.client.maxResources.disk - disk2
+                  }`
+                );
+              }
+              if (cpu2 + cpu > newsettings.api.client.maxResources.cpu) {
+                cb();
+                return res.redirect(
+                  `${redirectlink}?err=EXCEEDMAXCPU&num=${
+                    newsettings.api.client.maxResources.cpu - cpu2
+                  }`
+                );
+              }
+              if (servers2 >= newsettings.api.client.maxResources.servers) {
+                cb();
+                return res.redirect(`${redirectlink}?err=EXCEEDMAXSERVERS`);
+              }
+            }
+
             if (ram2 + ram > package.ram + extra.ram) {
               cb();
               return res.redirect(

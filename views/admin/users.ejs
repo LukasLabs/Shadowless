@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8"/>
+    <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title><%= settings.name %> - Admin Users</title>
+    <title><%= settings.name %> - Users Management</title>
     <link rel="icon" type="image/png" href="https://i.imgur.com/GY3cXet.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
@@ -54,99 +54,76 @@
                 <div class="absolute inset-0 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 backdrop-blur-sm bg-grid"></div>
                 <div class="relative p-8">
                     <h1 class="text-4xl font-bold mb-2 gradient-text">Users Management</h1>
-                    <p class="text-gray-300">Monitor and manage all user accounts and their resources.</p>
+                    <p class="text-gray-300">Manage user accounts, resources, and coins</p>
                 </div>
             </div>
 
-            <!-- Stats Overview -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                <!-- Total Users -->
-                <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl p-6 hover:bg-gray-900/90 transition-all duration-300 animate-fade-in card-hover shadow-lg">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center">
-                            <i class="fas fa-users text-indigo-500"></i>
+            <!-- Quick Actions Section -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <!-- Add Coins Card -->
+                <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl p-6 animate-fade-in shadow-lg">
+                    <h2 class="text-xl font-semibold mb-4 gradient-text">Add Coins</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-gray-300 mb-2">Discord ID</label>
+                            <input type="text" id="id1" placeholder="000000000000000000" 
+                                   class="w-full bg-black/30 border border-indigo-500/20 rounded-lg px-4 py-3 focus:outline-none focus:border-indigo-500/50 transition-all">
                         </div>
-                        <span id="totalUsers" class="text-2xl font-bold gradient-text">--</span>
-                    </div>
-                    <span class="text-gray-300">Total Users</span>
-                    <div class="flex items-center mt-2 text-xs text-green-400">
-                        <i class="fas fa-arrow-up mr-1"></i>
-                        <span id="newUsersTrend">+0% this week</span>
+                        <div>
+                            <label class="block text-gray-300 mb-2">Amount</label>
+                            <input type="text" id="amount1" placeholder="100" 
+                                   class="w-full bg-black/30 border border-indigo-500/20 rounded-lg px-4 py-3 focus:outline-none focus:border-indigo-500/50 transition-all">
+                        </div>
+                        <button onclick="addCoins()" class="w-full px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white transition-all shadow-lg shadow-indigo-500/20">
+                            Add Coins
+                        </button>
                     </div>
                 </div>
 
-                <!-- Active Users -->
-                <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl p-6 hover:bg-gray-900/90 transition-all duration-300 animate-fade-in card-hover shadow-lg">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
-                            <i class="fas fa-user-check text-blue-500"></i>
+                <!-- Add/Set Resources Card -->
+                <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl p-6 animate-fade-in shadow-lg">
+                    <h2 class="text-xl font-semibold mb-4 gradient-text">Manage Resources</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-gray-300 mb-2">Discord ID</label>
+                            <input type="text" id="id2" placeholder="000000000000000000" 
+                                   class="w-full bg-black/30 border border-indigo-500/20 rounded-lg px-4 py-3 focus:outline-none focus:border-indigo-500/50 transition-all">
                         </div>
-                        <span id="activeUsers" class="text-2xl font-bold gradient-text">--</span>
-                    </div>
-                    <span class="text-gray-300">Active Users</span>
-                    <div class="w-full h-2 bg-gray-800 rounded-full overflow-hidden mt-2">
-                        <div id="activeUsersBar" class="h-full bg-blue-500" style="width: 0%"></div>
-                    </div>
-                </div>
-
-                <!-- Total Resources -->
-                <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl p-6 hover:bg-gray-900/90 transition-all duration-300 animate-fade-in card-hover shadow-lg">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
-                            <i class="fas fa-server text-purple-500"></i>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-gray-300 mb-2">CPU Cores</label>
+                                <input type="text" id="cpu" placeholder="1" 
+                                       class="w-full bg-black/30 border border-indigo-500/20 rounded-lg px-4 py-3 focus:outline-none focus:border-indigo-500/50 transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-gray-300 mb-2">Memory (GiB)</label>
+                                <input type="text" id="memory" placeholder="2" 
+                                       class="w-full bg-black/30 border border-indigo-500/20 rounded-lg px-4 py-3 focus:outline-none focus:border-indigo-500/50 transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-gray-300 mb-2">Storage (GiB)</label>
+                                <input type="text" id="storage" placeholder="10" 
+                                       class="w-full bg-black/30 border border-indigo-500/20 rounded-lg px-4 py-3 focus:outline-none focus:border-indigo-500/50 transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-gray-300 mb-2">Servers</label>
+                                <input type="text" id="servers" placeholder="5" 
+                                       class="w-full bg-black/30 border border-indigo-500/20 rounded-lg px-4 py-3 focus:outline-none focus:border-indigo-500/50 transition-all">
+                            </div>
                         </div>
-                        <span id="totalServers" class="text-2xl font-bold gradient-text">--</span>
-                    </div>
-                    <span class="text-gray-300">Total Servers</span>
-                    <div class="flex items-center mt-2 text-xs text-gray-400">
-                        <span id="avgServersPerUser">Avg 0 per user</span>
-                    </div>
-                </div>
-
-                <!-- Total Coins -->
-                <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl p-6 hover:bg-gray-900/90 transition-all duration-300 animate-fade-in card-hover shadow-lg">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center">
-                            <i class="fas fa-coins text-amber-500"></i>
+                        <div class="grid grid-cols-2 gap-4">
+                            <button onclick="addResources()" class="px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white transition-all shadow-lg shadow-indigo-500/20">
+                                Add Resources
+                            </button>
+                            <button onclick="setResources()" class="px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white transition-all shadow-lg shadow-indigo-500/20">
+                                Set Resources
+                            </button>
                         </div>
-                        <span id="totalCoins" class="text-2xl font-bold gradient-text">--</span>
-                    </div>
-                    <span class="text-gray-300">Total Coins</span>
-                    <div class="flex items-center mt-2 text-xs text-gray-400">
-                        <span id="avgCoinsPerUser">Avg 0 per user</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Users Search and Filters -->
-            <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
-                <div class="relative flex-grow max-w-md">
-                    <input type="text" id="searchInput" placeholder="Search by username or Discord ID..." 
-                           class="w-full bg-gray-900/80 border border-indigo-500/20 rounded-xl px-4 py-3 pl-10 focus:outline-none focus:border-indigo-500/50 focus:shadow-glow transition-all duration-300">
-                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                </div>
-                
-                <div class="flex items-center space-x-4">
-                    <div class="relative">
-                        <select id="sortBy" class="bg-gray-900/80 border border-indigo-500/20 rounded-xl px-4 py-3 pr-10 focus:outline-none focus:border-indigo-500/50 transition-all duration-300 appearance-none">
-                            <option value="username">Sort by Username</option>
-                            <option value="ram">Sort by RAM</option>
-                            <option value="cpu">Sort by CPU</option>
-                            <option value="disk">Sort by Disk</option>
-                            <option value="servers">Sort by Servers</option>
-                            <option value="coins">Sort by Coins</option>
-                        </select>
-                        <i class="fas fa-chevron-down absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"></i>
-                    </div>
-                    
-                    <button id="addUserBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-xl transition-all duration-300 flex items-center space-x-2 shadow-lg shadow-indigo-500/20">
-                        <i class="fas fa-user-plus"></i>
-                        <span>Add User</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Users Table -->
+            <!-- Users Table Section -->
             <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl overflow-hidden animate-fade-in shadow-lg mb-8">
                 <div class="overflow-x-auto">
                     <table class="w-full">
@@ -162,307 +139,12 @@
                             </tr>
                         </thead>
                         <tbody id="usersTableBody">
-                            <!-- Loading state -->
-                            <tr>
-                                <td colspan="7" class="p-8 text-center text-gray-400">
-                                    <div class="flex flex-col items-center">
-                                        <div class="w-10 h-10 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin mb-3"></div>
-                                        <span>Loading users data...</span>
-                                    </div>
-                                </td>
-                            </tr>
+                            <!-- Table content will be dynamically populated -->
                         </tbody>
                     </table>
                 </div>
             </div>
-
-            <!-- Pagination -->
-            <div class="flex justify-between items-center">
-                <div class="text-gray-400 text-sm">
-                    Showing <span id="showingCount">0</span> of <span id="totalCount">0</span> users
-                </div>
-                <div class="flex space-x-2">
-                    <button id="prevPage" class="bg-gray-900/80 border border-indigo-500/20 rounded-lg px-4 py-2 hover:bg-gray-900/90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
-                        <i class="fas fa-chevron-left mr-1"></i> Previous
-                    </button>
-                    <button id="nextPage" class="bg-gray-900/80 border border-indigo-500/20 rounded-lg px-4 py-2 hover:bg-gray-900/90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
-                        Next <i class="fas fa-chevron-right ml-1"></i>
-                    </button>
-                </div>
-            </div>
         </main>
-    </div>
-
-    <!-- Edit User Modal -->
-    <div id="editModal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center">
-        <div class="bg-gray-900/90 border border-indigo-500/30 rounded-xl p-6 w-full max-w-lg shadow-lg shadow-indigo-500/20 animate-fade-in">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold gradient-text">Edit User</h2>
-                <button onclick="closeEditModal()" class="text-gray-400 hover:text-white transition-colors">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            
-            <form id="editForm" class="space-y-5">
-                <input type="hidden" id="editUserId">
-                
-                <div class="flex items-center space-x-4 mb-6">
-                    <img id="editUserAvatar" src="/api/placeholder/64/64" class="w-16 h-16 rounded-full border-2 border-indigo-500/30">
-                    <div>
-                        <h3 id="editUsername" class="text-xl font-semibold">Username</h3>
-                        <p id="editDiscordId" class="text-gray-400">Discord ID</p>
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-2 gap-5">
-                    <div>
-                        <label class="block text-gray-300 mb-2">RAM (MB)</label>
-                        <div class="relative">
-                            <input type="number" id="editRam" class="w-full bg-black/30 border border-indigo-500/20 rounded-lg px-4 py-3 focus:outline-none focus:border-indigo-500/50 transition-all">
-                            <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                                <i class="fas fa-memory"></i>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-gray-300 mb-2">CPU (%)</label>
-                        <div class="relative">
-                            <input type="number" id="editCpu" class="w-full bg-black/30 border border-indigo-500/20 rounded-lg px-4 py-3 focus:outline-none focus:border-indigo-500/50 transition-all">
-                            <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                                <i class="fas fa-microchip"></i>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-gray-300 mb-2">Disk (MB)</label>
-                        <div class="relative">
-                            <input type="number" id="editDisk" class="w-full bg-black/30 border border-indigo-500/20 rounded-lg px-4 py-3 focus:outline-none focus:border-indigo-500/50 transition-all">
-                            <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                                <i class="fas fa-hdd"></i>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-gray-300 mb-2">Servers</label>
-                        <div class="relative">
-                            <input type="number" id="editServers" class="w-full bg-black/30 border border-indigo-500/20 rounded-lg px-4 py-3 focus:outline-none focus:border-indigo-500/50 transition-all">
-                            <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                                <i class="fas fa-server"></i>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="col-span-2">
-                        <label class="block text-gray-300 mb-2">Coins</label>
-                        <div class="relative">
-                            <input type="number" id="editCoins" class="w-full bg-black/30 border border-indigo-500/20 rounded-lg px-4 py-3 focus:outline-none focus:border-indigo-500/50 transition-all">
-                            <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                                <i class="fas fa-coins"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="border-t border-indigo-500/20 pt-5 mt-5 flex justify-end space-x-3">
-                    <button type="button" onclick="closeEditModal()" class="px-6 py-3 rounded-xl text-gray-300 hover:text-white bg-gray-800 hover:bg-gray-700 transition-all">
-                        Cancel
-                    </button>
-                    <button type="submit" class="px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white transition-all shadow-lg shadow-indigo-500/20">
-                        Save Changes
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Add User Modal -->
-    <div id="addModal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center">
-        <div class="bg-gray-900/90 border border-indigo-500/30 rounded-xl p-6 w-full max-w-lg shadow-lg shadow-indigo-500/20 animate-fade-in">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold gradient-text">Add New User</h2>
-                <button onclick="closeAddModal()" class="text-gray-400 hover:text-white transition-colors">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            
-            <form id="addForm" class="space-y-5">
-                <div>
-                    <label class="block text-gray-300 mb-2">Discord ID</label>
-                    <div class="relative">
-                        <input type="text" id="addDiscordId" class="w-full bg-black/30 border border-indigo-500/20 rounded-lg px-4 py-3 focus:outline-none focus:border-indigo-500/50 transition-all" placeholder="Enter Discord ID">
-                        <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                            <i class="fab fa-discord"></i>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-2 gap-5">
-                    <div>
-                        <label class="block text-gray-300 mb-2">RAM (MB)</label>
-                        <div class="relative">
-                            <input type="number" id="addRam" class="w-full bg-black/30 border border-indigo-500/20 rounded-lg px-4 py-3 focus:outline-none focus:border-indigo-500/50 transition-all" value="0">
-                            <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                                <i class="fas fa-memory"></i>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-gray-300 mb-2">CPU (%)</label>
-                        <div class="relative">
-                            <input type="number" id="addCpu" class="w-full bg-black/30 border border-indigo-500/20 rounded-lg px-4 py-3 focus:outline-none focus:border-indigo-500/50 transition-all" value="0">
-                            <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                                <i class="fas fa-microchip"></i>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-gray-300 mb-2">Disk (MB)</label>
-                        <div class="relative">
-                            <input type="number" id="addDisk" class="w-full bg-black/30 border border-indigo-500/20 rounded-lg px-4 py-3 focus:outline-none focus:border-indigo-500/50 transition-all" value="0">
-                            <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                                <i class="fas fa-hdd"></i>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-gray-300 mb-2">Servers</label>
-                        <div class="relative">
-                            <input type="number" id="addServers" class="w-full bg-black/30 border border-indigo-500/20 rounded-lg px-4 py-3 focus:outline-none focus:border-indigo-500/50 transition-all" value="0">
-                            <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                                <i class="fas fa-server"></i>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="col-span-2">
-                        <label class="block text-gray-300 mb-2">Coins</label>
-                        <div class="relative">
-                            <input type="number" id="addCoins" class="w-full bg-black/30 border border-indigo-500/20 rounded-lg px-4 py-3 focus:outline-none focus:border-indigo-500/50 transition-all" value="0">
-                            <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                                <i class="fas fa-coins"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="border-t border-indigo-500/20 pt-5 mt-5 flex justify-end space-x-3">
-                    <button type="button" onclick="closeAddModal()" class="px-6 py-3 rounded-xl text-gray-300 hover:text-white bg-gray-800 hover:bg-gray-700 transition-all">
-                        Cancel
-                    </button>
-                    <button type="submit" class="px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white transition-all shadow-lg shadow-indigo-500/20">
-                        Add User
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- User Details Modal -->
-    <div id="detailsModal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center">
-        <div class="bg-gray-900/90 border border-indigo-500/30 rounded-xl w-full max-w-2xl shadow-lg shadow-indigo-500/20 animate-fade-in overflow-hidden">
-            <div class="relative h-32 bg-gradient-to-r from-indigo-600/30 to-purple-600/30">
-                <div class="absolute inset-0 bg-grid"></div>
-                <div class="absolute -bottom-12 left-8">
-                    <img id="detailsAvatar" src="/api/placeholder/96/96" class="w-24 h-24 rounded-full border-4 border-gray-900/90">
-                </div>
-                <button onclick="closeDetailsModal()" class="absolute top-4 right-4 text-white hover:text-gray-200 transition-colors">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            
-            <div class="pt-16 px-8 pb-8">
-                <div class="flex items-end space-x-2 mb-6">
-                    <h2 id="detailsUsername" class="text-2xl font-bold gradient-text">Username</h2>
-                    <span id="detailsDiscordId" class="text-gray-400 text-sm">Discord ID</span>
-                </div>
-                
-                <div class="grid grid-cols-2 gap-6 mb-8">
-                    <div class="bg-black/20 rounded-xl p-4 border border-indigo-500/20">
-                        <div class="flex items-center space-x-3 mb-1">
-                            <div class="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center">
-                                <i class="fas fa-memory text-purple-500"></i>
-                            </div>
-                            <span class="text-gray-300">RAM</span>
-                        </div>
-                        <span id="detailsRam" class="text-xl font-semibold">0 MB</span>
-                    </div>
-                    
-                    <div class="bg-black/20 rounded-xl p-4 border border-indigo-500/20">
-                        <div class="flex items-center space-x-3 mb-1">
-                            <div class="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                                <i class="fas fa-microchip text-blue-500"></i>
-                            </div>
-                            <span class="text-gray-300">CPU</span>
-                        </div>
-                        <span id="detailsCpu" class="text-xl font-semibold">0%</span>
-                    </div>
-                    
-                    <div class="bg-black/20 rounded-xl p-4 border border-indigo-500/20">
-                        <div class="flex items-center space-x-3 mb-1">
-                            <div class="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
-                                <i class="fas fa-hdd text-amber-500"></i>
-                            </div>
-                            <span class="text-gray-300">Disk</span>
-                        </div>
-                        <span id="detailsDisk" class="text-xl font-semibold">0 MB</span>
-                    </div>
-                    
-                    <div class="bg-black/20 rounded-xl p-4 border border-indigo-500/20">
-                        <div class="flex items-center space-x-3 mb-1">
-                            <div class="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center">
-                                <i class="fas fa-server text-green-500"></i>
-                            </div>
-                            <span class="text-gray-300">Servers</span>
-                        </div>
-                        <span id="detailsServers" class="text-xl font-semibold">0</span>
-                    </div>
-                </div>
-                
-                <div class="bg-black/20 rounded-xl p-4 border border-indigo-500/20 mb-8">
-                    <div class="flex items-center space-x-3 mb-1">
-                        <div class="w-8 h-8 rounded-lg bg-yellow-500/10 flex items-center justify-center">
-                            <i class="fas fa-coins text-yellow-500"></i>
-                        </div>
-                        <span class="text-gray-300">Coins</span>
-                    </div>
-                    <span id="detailsCoins" class="text-xl font-semibold">0</span>
-                </div>
-                
-                <div class="flex justify-end space-x-3">
-                    <button id="detailsEditBtn" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white transition-all shadow-lg shadow-indigo-500/20">
-                        <i class="fas fa-edit mr-2"></i> Edit User
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Delete Confirmation Modal -->
-    <div id="deleteModal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center">
-        <div class="bg-gray-900/90 border border-red-500/30 rounded-xl p-6 w-full max-w-md shadow-lg animate-fade-in">
-            <div class="flex flex-col items-center text-center mb-6">
-                <div class="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mb-4">
-                    <i class="fas fa-exclamation-triangle text-red-500 text-2xl"></i>
-                </div>
-                <h2 class="text-2xl font-bold mb-2">Delete User</h2>
-                <p class="text-gray-400">Are you sure you want to delete this user? This action cannot be undone.</p>
-            </div>
-            
-            <div class="flex justify-center space-x-4">
-                <button onclick="closeDeleteModal()" class="px-6 py-3 rounded-xl text-gray-300 hover:text-white bg-gray-800 hover:bg-gray-700 transition-all">
-                    Cancel
-                </button>
-                <button id="confirmDeleteBtn" class="px-6 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white transition-all shadow-lg shadow-red-500/20">
-                    Delete
-                </button>
-            </div>
-        </div>
     </div>
 
     <!-- Success Toast -->
@@ -482,142 +164,34 @@
     </div>
 
     <script>
-        let currentPage = 1;
-        const usersPerPage = 10;
-        let allUsers = [];
-
-        // Fetch all users
-        async function fetchUsers() {
-            try {
-                const response = await fetch('/api/admin/users/all');
-                if (!response.ok) {
-                    throw new Error('Failed to fetch users');
-                }
-                allUsers = await response.json();
-                updateUsersTable();
-                updateStats();
-            } catch (error) {
-                showError('Failed to load users: ' + error.message);
-            }
+        // Add Coins Function
+        async function addCoins() {
+            let id1 = encodeURIComponent(document.getElementById("id1").value);
+            let amount1 = encodeURIComponent(document.getElementById("amount1").value);
+            document.location.href = `/addcoins?id=${id1}&coins=${amount1}`;
         }
 
-        // Update users table
-        function updateUsersTable() {
-            const start = (currentPage - 1) * usersPerPage;
-            const end = start + usersPerPage;
-            const usersToShow = allUsers.slice(start, end);
-            
-            const tbody = document.getElementById('usersTableBody');
-            tbody.innerHTML = '';
-
-            if (usersToShow.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="7" class="p-8 text-center text-gray-400">
-                            No users found
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-
-            usersToShow.forEach(user => {
-                const tr = document.createElement('tr');
-                tr.className = 'border-b border-indigo-500/20 hover:bg-indigo-500/5 transition-colors';
-                tr.innerHTML = `
-                    <td class="p-4">
-                        <div class="flex items-center space-x-3">
-                            <img src="${user.avatar || '/api/placeholder/64/64'}" class="w-8 h-8 rounded-full">
-                            <div>
-                                <div class="font-medium">${user.username}</div>
-                                <div class="text-xs text-gray-400">${user.discordId}</div>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="p-4">${user.ram} MB</td>
-                    <td class="p-4">${user.cpu}%</td>
-                    <td class="p-4">${user.disk} MB</td>
-                    <td class="p-4">${user.servers}</td>
-                    <td class="p-4">${user.coins}</td>
-                    <td class="p-4">
-                        <div class="flex space-x-2">
-                            <button onclick="showEditModal('${user.id}')" class="px-3 py-1 rounded-lg bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-400 transition-colors">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button onclick="showDeleteModal('${user.id}')" class="px-3 py-1 rounded-lg bg-red-600/20 hover:bg-red-600/30 text-red-400 transition-colors">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-
-            // Update pagination info
-            document.getElementById('showingCount').textContent = usersToShow.length;
-            document.getElementById('totalCount').textContent = allUsers.length;
-            
-            // Update pagination buttons
-            document.getElementById('prevPage').disabled = currentPage === 1;
-            document.getElementById('nextPage').disabled = end >= allUsers.length;
+        // Add Resources Function
+        async function addResources() {
+            let id2 = encodeURIComponent(document.getElementById("id2").value);
+            let cpu = encodeURIComponent(document.getElementById("cpu").value * 100);
+            let memory = encodeURIComponent(document.getElementById("memory").value * 1024);
+            let storage = encodeURIComponent(document.getElementById("storage").value * 1024);
+            let servers = encodeURIComponent(document.getElementById("servers").value);
+            document.location.href = `/addresources?id=${id2}&cpu=${cpu}&ram=${memory}&disk=${storage}&servers=${servers}`;
         }
 
-        // Update stats
-        function updateStats() {
-            document.getElementById('totalUsers').textContent = allUsers.length;
-            document.getElementById('activeUsers').textContent = allUsers.filter(u => u.servers > 0).length;
-            document.getElementById('totalServers').textContent = allUsers.reduce((sum, u) => sum + u.servers, 0);
-            document.getElementById('totalCoins').textContent = allUsers.reduce((sum, u) => sum + u.coins, 0);
-            
-            // Update trends and averages
-            const avgServers = allUsers.length > 0 ? (allUsers.reduce((sum, u) => sum + u.servers, 0) / allUsers.length).toFixed(1) : 0;
-            const avgCoins = allUsers.length > 0 ? (allUsers.reduce((sum, u) => sum + u.coins, 0) / allUsers.length).toFixed(1) : 0;
-            
-            document.getElementById('avgServersPerUser').textContent = `Avg ${avgServers} per user`;
-            document.getElementById('avgCoinsPerUser').textContent = `Avg ${avgCoins} per user`;
+        // Set Resources Function
+        async function setResources() {
+            let id2 = encodeURIComponent(document.getElementById("id2").value);
+            let cpu = encodeURIComponent(document.getElementById("cpu").value * 100);
+            let memory = encodeURIComponent(document.getElementById("memory").value * 1024);
+            let storage = encodeURIComponent(document.getElementById("storage").value * 1024);
+            let servers = encodeURIComponent(document.getElementById("servers").value);
+            document.location.href = `/setresources?id=${id2}&cpu=${cpu}&ram=${memory}&disk=${storage}&servers=${servers}`;
         }
 
-        // Pagination handlers
-        document.getElementById('prevPage').addEventListener('click', () => {
-            if (currentPage > 1) {
-                currentPage--;
-                updateUsersTable();
-            }
-        });
-
-        document.getElementById('nextPage').addEventListener('click', () => {
-            if (currentPage * usersPerPage < allUsers.length) {
-                currentPage++;
-                updateUsersTable();
-            }
-        });
-
-        // Search handler
-        document.getElementById('searchInput').addEventListener('input', (e) => {
-            const searchTerm = e.target.value.toLowerCase();
-            const filteredUsers = allUsers.filter(user => 
-                user.username.toLowerCase().includes(searchTerm) || 
-                user.discordId.toLowerCase().includes(searchTerm)
-            );
-            allUsers = filteredUsers;
-            currentPage = 1;
-            updateUsersTable();
-        });
-
-        // Sort handler
-        document.getElementById('sortBy').addEventListener('change', (e) => {
-            const sortBy = e.target.value;
-            allUsers.sort((a, b) => {
-                if (sortBy === 'username') {
-                    return a.username.localeCompare(b.username);
-                }
-                return b[sortBy] - a[sortBy];
-            });
-            currentPage = 1;
-            updateUsersTable();
-        });
-
-        // Toast functions
+        // Toast Functions
         function showSuccess(message = 'Operation successful!') {
             const toast = document.getElementById('successToast');
             toast.querySelector('span').textContent = message;
@@ -632,8 +206,11 @@
             setTimeout(() => toast.classList.add('hidden'), 3000);
         }
 
-        // Initial load
-        fetchUsers();
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add any initialization code here
+            // For example, fetching initial user data
+        });
     </script>
 </body>
 </html>

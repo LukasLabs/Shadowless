@@ -1045,6 +1045,94 @@ module.exports.load = async function (app, db) {
     }
   });
 
+  app.get("/admin/edituser", async (req, res) => {
+    let theme = indexjs.get(req);
+
+    if (!req.session.pterodactyl) return four0four(req, res, theme);
+
+    let cacheaccount = await fetch(
+      settings.pterodactyl.domain +
+        "/api/application/users/" +
+        (await db.get("users-" + req.session.userinfo.id)) +
+        "?include=servers",
+      {
+        method: "get",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${settings.pterodactyl.key}`,
+        },
+      }
+    );
+    if ((await cacheaccount.statusText) == "Not Found")
+      return four0four(req, res, theme);
+    let cacheaccountinfo = JSON.parse(await cacheaccount.text());
+
+    req.session.pterodactyl = cacheaccountinfo.attributes;
+    if (cacheaccountinfo.attributes.root_admin !== true)
+      return four0four(req, res, theme);
+
+    let id = req.query.id;
+    if (!id) return res.redirect("/admin?err=MISSINGID");
+
+    let userCoins = (await db.get("coins-" + id)) || 0;
+    let userExtra = (await db.get("extra-" + id)) || {
+      ram: 0,
+      disk: 0,
+      cpu: 0,
+      servers: 0,
+    };
+
+    // If this is a POST request (form submission)
+    if (Object.keys(req.query).length > 1) {
+      let coins = req.query.coins;
+      let ram = req.query.ram;
+      let disk = req.query.disk;
+      let cpu = req.query.cpu;
+      let servers = req.query.servers;
+
+      // Validate coins
+      if (coins !== undefined) {
+        coins = parseFloat(coins);
+        if (isNaN(coins)) {
+          return res.redirect(`/admin/edituser?id=${id}&err=INVALIDCOINNUMBER`);
+        }
+        if (coins < 0 || coins > 999999999999999) {
+          return res.redirect(`/admin/edituser?id=${id}&err=COINSIZE`);
+        }
+        if (coins == 0) {
+          await db.delete("coins-" + id);
+        } else {
+          await db.set("coins-" + id, coins);
+        }
+      }
+
+      // Update extra resources
+      let newExtra = {
+        ram: parseInt(ram) || 0,
+        disk: parseInt(disk) || 0,
+        cpu: parseInt(cpu) || 0,
+        servers: parseInt(servers) || 0,
+      };
+
+      await db.set("extra-" + id, newExtra);
+
+      log(
+        `edit user`,
+        `${req.session.userinfo.username}#${req.session.userinfo.discriminator} edited the user with ID \`${id}\` with the following changes:\n\`\`\`Coins: ${coins}\nExtra RAM: ${newExtra.ram}MB\nExtra Disk: ${newExtra.disk}MB\nExtra CPU: ${newExtra.cpu}%\nExtra Servers: ${newExtra.servers}\`\`\``
+      );
+
+      return res.redirect(`/admin/edituser?id=${id}&err=none`);
+    }
+
+    // Render the edit page
+    res.render("admin/edituser", {
+      settings: settings,
+      req: req,
+      userCoins: userCoins,
+      userExtra: userExtra,
+    });
+  });
+
   async function four0four(req, res, theme) {
     ejs.renderFile(
       `./views/${theme.settings.notfound}`,

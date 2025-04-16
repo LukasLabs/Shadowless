@@ -141,6 +141,27 @@
     <div class="circle-bg top-0 left-0 opacity-40"></div>
     <div class="circle-bg bottom-0 right-0 opacity-30"></div>
     
+    <% if (req.query.err) { %>
+        <div class="fixed top-4 right-4 z-50">
+            <div class="bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center">
+                <i class="fas fa-exclamation-circle mr-2"></i>
+                <span>
+                    <% if (req.query.err === 'EXCEEDMAXRAM') { %>
+                        You have exceeded the maximum RAM limit. You can only use <%= req.query.num %>MB more.
+                    <% } else if (req.query.err === 'EXCEEDMAXDISK') { %>
+                        You have exceeded the maximum disk limit. You can only use <%= req.query.num %>MB more.
+                    <% } else if (req.query.err === 'EXCEEDMAXCPU') { %>
+                        You have exceeded the maximum CPU limit. You can only use <%= req.query.num %>% more.
+                    <% } else if (req.query.err === 'EXCEEDMAXSERVERS') { %>
+                        You have reached the maximum number of servers allowed.
+                    <% } else if (req.query.err === 'none') { %>
+                        Operation completed successfully!
+                    <% } %>
+                </span>
+            </div>
+        </div>
+    <% } %>
+    
     <main class="relative z-10 max-w-5xl mx-auto px-6 py-20 md:py-32">
         <!-- Header -->
         <header class="mb-24 md:mb-40">

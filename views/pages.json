@@ -40,7 +40,11 @@
     "couponrevokefailed": "/admin",
     "couponrevokesuccess": "/admin",
     "removeaccountfailed": "/admin",
-    "removeaccountsuccess": "/admin"
+    "removeaccountsuccess": "/admin",
+    "exceedmaxram": "/servers/new",
+    "exceedmaxdisk": "/servers/new",
+    "exceedmaxcpu": "/servers/new",
+    "exceedmaxservers": "/servers/new"
   },
   "pages": {
     "dashboard": "general/dashboard.ejs",
@@ -55,7 +59,8 @@
     "accounts": "accounts.ejs",
     "admin": "admin/admin.ejs",
     "settings": "admin/settings.ejs",
-    "lv": "coins/lv.ejs"
+    "lv": "coins/lv.ejs",
+    "admin/edituser": "admin/edituser.ejs"
   },
   "mustbeloggedin": [
     "/dashboard",
@@ -69,6 +74,7 @@
   ],
   "mustbeadmin": [
     "/admin",
-    "/settings"
+    "/settings",
+    "/admin/edituser"
   ]
 }

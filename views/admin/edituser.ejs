@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit User - <%= settings.name %></title>
+    <link rel="icon" type="image/png" href="https://i.imgur.com/GY3cXet.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&display=swap');
+        
+        :root {
+            --bg-dark: #080808;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --accent: #9333ea;
+            --accent-light: #a855f7;
+            --border: #1f1f1f;
+        }
+        
+        * {
+            font-family: 'Syne', sans-serif;
+        }
+        
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+        }
+        
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJhIiB4PSIwIiB5PSIwIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iLjc1IiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+PGZlQ29sb3JNYXRyaXggdHlwZT0ic2F0dXJhdGUiIHZhbHVlcz0iMCIvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWx0ZXI9InVybCgjYSkiIG9wYWNpdHk9Ii4wNSIvPjwvc3ZnPg==');
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .gradient-accent {
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+        }
+        
+        .text-gradient {
+            background: linear-gradient(90deg, #fff, #ccc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .display-font {
+            letter-spacing: -0.02em;
+        }
+        
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border), transparent);
+        }
+        
+        .text-shadow {
+            text-shadow: 0 0 40px rgba(147, 51, 234, 0.5);
+        }
+        
+        .glow {
+            box-shadow: 0 0 30px rgba(147, 51, 234, 0.15);
+        }
+        
+        .hover-translate {
+            transition: transform 0.3s ease;
+        }
+        
+        .hover-translate:hover {
+            transform: translateY(-4px);
+        }
+        
+        .hover-glow:hover {
+            box-shadow: 0 0 30px rgba(147, 51, 234, 0.3);
+        }
+        
+        .neo-brutalism {
+            border: 2px solid #1a1a1a;
+            box-shadow: 4px 4px 0 #1a1a1a;
+            transition: all 0.2s ease;
+        }
+        
+        .neo-brutalism:hover {
+            box-shadow: 8px 8px 0 var(--accent);
+            transform: translate(-4px, -4px);
+        }
+    </style>
+</head>
+<body class="relative">
+    <div class="noise"></div>
+    
+    <% if (req.query.err) { %>
+        <div class="fixed top-4 right-4 z-50">
+            <div class="bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center">
+                <i class="fas fa-exclamation-circle mr-2"></i>
+                <span>
+                    <% if (req.query.err === 'none') { %>
+                        Changes saved successfully!
+                    <% } else if (req.query.err === 'INVALIDID') { %>
+                        Invalid user ID provided.
+                    <% } else if (req.query.err === 'MISSINGID') { %>
+                        No user ID provided.
+                    <% } else if (req.query.err === 'INVALIDCOINNUMBER') { %>
+                        Invalid coin amount provided.
+                    <% } else if (req.query.err === 'COINSIZE') { %>
+                        Coin amount must be between 0 and 999999999999999.
+                    <% } %>
+                </span>
+            </div>
+        </div>
+    <% } %>
+    
+    <main class="relative z-10 max-w-4xl mx-auto px-6 py-20">
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold mb-4">Edit User</h1>
+            <p class="text-gray-400">Modify user resources and coins</p>
+        </div>
+        
+        <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-8 glow">
+            <form action="/admin/edituser" method="GET" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-2">User ID</label>
+                    <input type="text" name="id" value="<%= req.query.id %>" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500" required>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Coins</label>
+                        <input type="number" name="coins" value="<%= userCoins %>" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500" min="0" max="999999999999999">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Extra RAM (MB)</label>
+                        <input type="number" name="ram" value="<%= userExtra.ram %>" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500" min="0">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Extra Disk (MB)</label>
+                        <input type="number" name="disk" value="<%= userExtra.disk %>" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500" min="0">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Extra CPU (%)</label>
+                        <input type="number" name="cpu" value="<%= userExtra.cpu %>" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500" min="0">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Extra Servers</label>
+                        <input type="number" name="servers" value="<%= userExtra.servers %>" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500" min="0">
+                    </div>
+                </div>
+                
+                <div class="flex justify-end space-x-4">
+                    <a href="/admin" class="neo-brutalism px-6 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors">
+                        Cancel
+                    </a>
+                    <button type="submit" class="neo-brutalism px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+</body>
+</html> 

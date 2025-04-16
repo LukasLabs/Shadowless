@@ -344,20 +344,11 @@
 
                 if (response.ok) {
                     showNotification('Settings updated successfully', 'success');
-                    // Add subtle animation to form
-                    const form = event.target;
-                    form.classList.add('opacity-50');
-                    setTimeout(() => {
-                        form.classList.remove('opacity-50');
-                    }, 300);
-                    
-                    // Only reload the page if specifically needed
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1500);
+                    // Reload the page immediately
+                    window.location.reload();
                 } else {
-                    const error = await response.json();
-                    showNotification(error.error || 'Failed to update settings', 'error');
+                    const result = await response.json();
+                    showNotification(result.error || 'Failed to update settings', 'error');
                 }
             } catch (error) {
                 console.error('Error updating settings:', error);

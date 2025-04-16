@@ -181,11 +181,17 @@ router.put('/api/settings', async (req, res) => {
     try {
         const fs = require('fs');
         const path = require('path');
-        const settingsPath = path.join(__dirname, '..', 'settings.json');
+        const settingsPath = path.resolve(process.cwd(), 'settings.json');
         const updatedSettings = req.body;
 
         // Read current settings
-        const currentSettings = JSON.parse(fs.readFileSync(settingsPath));
+        let currentSettings;
+        try {
+            currentSettings = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
+        } catch (error) {
+            console.error('Error reading settings file:', error);
+            return res.status(500).json({ error: 'Failed to read settings file' });
+        }
 
         // Update nested settings
         Object.keys(updatedSettings).forEach(key => {
@@ -201,7 +207,12 @@ router.put('/api/settings', async (req, res) => {
         });
 
         // Write updated settings back to file
-        fs.writeFileSync(settingsPath, JSON.stringify(currentSettings, null, 4));
+        try {
+            fs.writeFileSync(settingsPath, JSON.stringify(currentSettings, null, 4));
+        } catch (error) {
+            console.error('Error writing settings file:', error);
+            return res.status(500).json({ error: 'Failed to write settings file' });
+        }
 
         // Update settings in memory
         Object.assign(settings, currentSettings);
@@ -209,7 +220,7 @@ router.put('/api/settings', async (req, res) => {
         res.json({ success: true });
     } catch (error) {
         console.error('Error updating settings:', error);
-        res.status(500).json({ error: 'Failed to update settings' });
+        res.status(500).json({ error: 'Failed to update settings', details: error.message });
     }
 });
 
@@ -503,6 +514,124 @@ router.post('/api/servers/create', async (req, res) => {
     } catch (error) {
         console.error('Error creating server:', error);
         res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Get logs API endpoint
+router.get('/api/logs', async (req, res) => {
+    if (!req.session.pterodactyl || !req.session.pterodactyl.root_admin) {
+        return res.status(403).json({ error: 'Unauthorized' });
+    }
+
+    try {
+        const { page = 1, limit = 10, level, search, sort = 'newest' } = req.query;
+        const skip = (page - 1) * limit;
+
+        // Read logs from file
+        const fs = require('fs');
+        const path = require('path');
+        const logsPath = path.resolve(process.cwd(), 'logs.json');
+        
+        let logs = [];
+        try {
+            if (fs.existsSync(logsPath)) {
+                const fileContent = fs.readFileSync(logsPath, 'utf8');
+                logs = fileContent ? JSON.parse(fileContent) : [];
+            } else {
+                // Create empty logs file if it doesn't exist
+                fs.writeFileSync(logsPath, JSON.stringify([], null, 2));
+            }
+        } catch (error) {
+            console.error('Error reading logs file:', error);
+            logs = [];
+        }
+
+        // Apply filters
+        let filteredLogs = [...logs];
+        
+        if (level) {
+            filteredLogs = filteredLogs.filter(log => log.level === level);
+        }
+        
+        if (search) {
+            const searchLower = search.toLowerCase();
+            filteredLogs = filteredLogs.filter(log => 
+                (log.user && log.user.toLowerCase().includes(searchLower)) ||
+                (log.action && log.action.toLowerCase().includes(searchLower)) ||
+                (log.details && log.details.toLowerCase().includes(searchLower))
+            );
+        }
+
+        // Sort logs
+        if (sort === 'newest') {
+            filteredLogs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        } else {
+            filteredLogs.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+        }
+
+        // Get paginated results
+        const paginatedLogs = filteredLogs.slice(skip, skip + limit);
+        
+        // Count logs by level for stats
+        const stats = {
+            info: filteredLogs.filter(log => log.level === 'info').length,
+            warning: filteredLogs.filter(log => log.level === 'warning').length,
+            error: filteredLogs.filter(log => log.level === 'error').length,
+            success: filteredLogs.filter(log => log.level === 'success').length,
+            system: filteredLogs.filter(log => log.level === 'system').length
+        };
+
+        res.json({
+            logs: paginatedLogs,
+            total: filteredLogs.length,
+            stats
+        });
+    } catch (error) {
+        console.error('Error fetching logs:', error);
+        res.status(500).json({ error: 'Failed to fetch logs', details: error.message });
+    }
+});
+
+// Clear logs API endpoint
+router.delete('/api/logs', async (req, res) => {
+    if (!req.session.pterodactyl || !req.session.pterodactyl.root_admin) {
+        return res.status(403).json({ error: 'Unauthorized' });
+    }
+
+    try {
+        const fs = require('fs');
+        const path = require('path');
+        const logsPath = path.resolve(process.cwd(), 'logs.json');
+        
+        // Clear logs by writing empty array
+        fs.writeFileSync(logsPath, JSON.stringify([], null, 2));
+        
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error clearing logs:', error);
+        res.status(500).json({ error: 'Failed to clear logs' });
+    }
+});
+
+// Render logs page
+router.get('/logs', async (req, res) => {
+    if (!req.session.pterodactyl || !req.session.pterodactyl.root_admin) {
+        return res.redirect('/login');
+    }
+
+    try {
+        // Get user's coins
+        const userCoins = await db.get(`coins-${req.session.userinfo.id}`) || 0;
+
+        res.render('admin/logs', {
+            settings: settings,
+            req: req,
+            coins: userCoins,
+            pterodactyl: req.session.pterodactyl
+        });
+    } catch (error) {
+        console.error('Error rendering logs page:', error);
+        res.status(500).send('Internal Server Error');
     }
 });
 

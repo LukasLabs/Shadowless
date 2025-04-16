@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title><%= settings.name %> - Admin Logs</title>
+    <link rel="icon" type="image/png" href="https://i.imgur.com/GY3cXet.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+        .shadow-glow {
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+        }
+        .gradient-text {
+            background: linear-gradient(45deg, #6366f1, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .bg-grid {
+            background-image: radial-gradient(rgba(99, 102, 241, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .card-hover:hover {
+            transform: translateY(-3px);
+        }
+        .log-item:hover {
+            border-color: rgba(99, 102, 241, 0.4);
+        }
+        .log-level-info {
+            border-left: 4px solid #60a5fa;
+        }
+        .log-level-warning {
+            border-left: 4px solid #fbbf24;
+        }
+        .log-level-error {
+            border-left: 4px solid #ef4444;
+        }
+        .log-level-success {
+            border-left: 4px solid #10b981;
+        }
+        .log-level-system {
+            border-left: 4px solid #8b5cf6;
+        }
+        .filter-active {
+            background-color: rgba(99, 102, 241, 0.2);
+            border-color: rgba(99, 102, 241, 0.5);
+        }
+    </style>
+</head>
+<body class="bg-black text-white min-h-screen">
+    <div class="flex">
+        <!-- Sidebar -->
+        <%- include('../partials/admin-nav') %>
+        
+        <!-- Main Content -->
+        <main class="flex-1 ml-72 p-8">
+            <!-- Header Section -->
+            <div class="relative rounded-2xl overflow-hidden mb-8 animate-fade-in shadow-glow">
+                <div class="absolute inset-0 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 backdrop-blur-sm bg-grid"></div>
+                <div class="relative p-8">
+                    <h1 class="text-4xl font-bold mb-2 gradient-text">Admin Logs</h1>
+                    <p class="text-gray-300">Monitor system activity, user actions, and important events.</p>
+                </div>
+            </div>
+
+            <!-- Log Controls -->
+            <div class="flex flex-col lg:flex-row gap-6 mb-8">
+                <!-- Log Stats -->
+                <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 w-full lg:w-3/4">
+                    <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl p-4 hover:bg-gray-900/90 transition-all duration-300 animate-fade-in card-hover shadow-lg">
+                        <div class="flex items-center justify-between">
+                            <div class="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
+                                <i class="fas fa-info-circle text-blue-500"></i>
+                            </div>
+                            <span class="text-xl font-bold text-blue-400">0</span>
+                        </div>
+                        <p class="text-sm text-gray-400 mt-2">Information</p>
+                    </div>
+                    
+                    <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl p-4 hover:bg-gray-900/90 transition-all duration-300 animate-fade-in card-hover shadow-lg">
+                        <div class="flex items-center justify-between">
+                            <div class="w-10 h-10 rounded-xl bg-yellow-500/10 flex items-center justify-center">
+                                <i class="fas fa-exclamation-triangle text-yellow-500"></i>
+                            </div>
+                            <span class="text-xl font-bold text-yellow-400">0</span>
+                        </div>
+                        <p class="text-sm text-gray-400 mt-2">Warnings</p>
+                    </div>
+                    
+                    <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl p-4 hover:bg-gray-900/90 transition-all duration-300 animate-fade-in card-hover shadow-lg">
+                        <div class="flex items-center justify-between">
+                            <div class="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center">
+                                <i class="fas fa-times-circle text-red-500"></i>
+                            </div>
+                            <span class="text-xl font-bold text-red-400">0</span>
+                        </div>
+                        <p class="text-sm text-gray-400 mt-2">Errors</p>
+                    </div>
+                    
+                    <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl p-4 hover:bg-gray-900/90 transition-all duration-300 animate-fade-in card-hover shadow-lg">
+                        <div class="flex items-center justify-between">
+                            <div class="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center">
+                                <i class="fas fa-check-circle text-green-500"></i>
+                            </div>
+                            <span class="text-xl font-bold text-green-400">0</span>
+                        </div>
+                        <p class="text-sm text-gray-400 mt-2">Success</p>
+                    </div>
+                    
+                    <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl p-4 hover:bg-gray-900/90 transition-all duration-300 animate-fade-in card-hover shadow-lg">
+                        <div class="flex items-center justify-between">
+                            <div class="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
+                                <i class="fas fa-cog text-purple-500"></i>
+                            </div>
+                            <span class="text-xl font-bold text-purple-400">0</span>
+                        </div>
+                        <p class="text-sm text-gray-400 mt-2">System</p>
+                    </div>
+                </div>
+                
+                <!-- Search and Actions -->
+                <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl p-5 flex flex-col gap-4 w-full lg:w-1/4 animate-fade-in card-hover shadow-lg">
+                    <div class="relative">
+                        <input type="text" placeholder="Search logs..." class="w-full bg-black/40 border border-indigo-500/20 rounded-lg py-2 px-4 pl-10 text-gray-300 focus:outline-none focus:border-indigo-500/50">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-500"></i>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-lg transition-all duration-300 text-sm shadow-lg shadow-indigo-500/20">
+                            <i class="fas fa-download mr-2"></i> Export
+                        </button>
+                        <button class="flex-1 bg-red-600/80 hover:bg-red-700/80 text-white px-3 py-2 rounded-lg transition-all duration-300 text-sm shadow-lg shadow-red-500/20">
+                            <i class="fas fa-trash-alt mr-2"></i> Clear
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Log Filters -->
+            <div class="mb-6 flex flex-wrap items-center gap-3">
+                <span class="text-gray-400">Filter:</span>
+                <button class="filter-active bg-gray-800/80 border border-gray-700 rounded-lg px-3 py-1.5 text-sm transition-all duration-200 flex items-center">
+                    <span class="w-2 h-2 rounded-full bg-blue-500 mr-2"></span>
+                    Information
+                </button>
+                <button class="bg-gray-800/80 border border-gray-700 hover:border-gray-600 rounded-lg px-3 py-1.5 text-sm transition-all duration-200 flex items-center">
+                    <span class="w-2 h-2 rounded-full bg-yellow-500 mr-2"></span>
+                    Warnings
+                </button>
+                <button class="bg-gray-800/80 border border-gray-700 hover:border-gray-600 rounded-lg px-3 py-1.5 text-sm transition-all duration-200 flex items-center">
+                    <span class="w-2 h-2 rounded-full bg-red-500 mr-2"></span>
+                    Errors
+                </button>
+                <button class="bg-gray-800/80 border border-gray-700 hover:border-gray-600 rounded-lg px-3 py-1.5 text-sm transition-all duration-200 flex items-center">
+                    <span class="w-2 h-2 rounded-full bg-green-500 mr-2"></span>
+                    Success
+                </button>
+                <button class="bg-gray-800/80 border border-gray-700 hover:border-gray-600 rounded-lg px-3 py-1.5 text-sm transition-all duration-200 flex items-center">
+                    <span class="w-2 h-2 rounded-full bg-purple-500 mr-2"></span>
+                    System
+                </button>
+                <div class="ml-auto">
+                    <select class="bg-gray-800/80 border border-gray-700 hover:border-gray-600 rounded-lg px-3 py-1.5 text-sm transition-all duration-200">
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Logs Table -->
+            <div class="bg-gray-900/80 border border-indigo-500/20 rounded-xl p-0 animate-fade-in shadow-lg overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="bg-gray-800/50 border-b border-indigo-500/20">
+                                <th class="py-3 px-4 text-left text-sm text-gray-400 font-medium">Timestamp</th>
+                                <th class="py-3 px-4 text-left text-sm text-gray-400 font-medium">Level</th>
+                                <th class="py-3 px-4 text-left text-sm text-gray-400 font-medium">User</th>
+                                <th class="py-3 px-4 text-left text-sm text-gray-400 font-medium">Action</th>
+                                <th class="py-3 px-4 text-left text-sm text-gray-400 font-medium">Details</th>
+                                <th class="py-3 px-4 text-left text-sm text-gray-400 font-medium w-20">View</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Logs will be populated dynamically by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                <div class="p-4 flex items-center justify-between border-t border-gray-800">
+                    <div class="text-sm text-gray-400">
+                        Showing <span class="text-white">1-8</span> of <span class="text-white">152</span> logs
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button class="px-3 py-1.5 bg-gray-800/80 text-gray-400 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="px-3 py-1.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all duration-200">1</button>
+                        <button class="px-3 py-1.5 bg-gray-800/80 text-gray-400 rounded-lg hover:bg-gray-700/80 transition-all duration-200">2</button>
+                        <button class="px-3 py-1.5 bg-gray-800/80 text-gray-400 rounded-lg hover:bg-gray-700/80 transition-all duration-200">3</button>
+                        <span class="px-3 py-1.5 text-gray-400">...</span>
+                        <button class="px-3 py-1.5 bg-gray-800/80 text-gray-400 rounded-lg hover:bg-gray-700/80 transition-all duration-200">19</button>
+                        <button class="px-3 py-1.5 bg-gray-800/80 text-gray-400 rounded-lg hover:bg-gray-700/80 transition-all duration-200">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Log Detail Modal (Hidden by default) -->
+            <div id="logDetailModal" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 hidden">
+                <div class="bg-gray-900 border border-indigo-500/30 rounded-xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-fade-in shadow-2xl">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-bold gradient-text">Log Details</h3>
+                        <button id="closeModal" class="text-gray-400 hover:text-white transition-all">
+                            <i class="fas fa-times text-lg"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <p class="text-sm text-gray-400 mb-1">Timestamp</p>
+                            <p class="text-white">Apr 16, 2025 14:32:18</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-400 mb-1">Level</p>
+                            <span class="px-2 py-1 bg-blue-500/10 text-blue-400 rounded-md text-xs inline-block">
+                                <i class="fas fa-info-circle mr-1"></i> Information
+                            </span>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-400 mb-1">User</p>
+                            <div class="flex items-center">
+                                <div class="w-6 h-6 rounded-full bg-indigo-500/30 flex items-center justify-center mr-2">
+                                    <span class="text-xs text-indigo-300">JS</span>
+                                </div>
+                                <p class="text-white">johnsmith</p>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-400 mb-1">IP Address</p>
+                            <p class="text-white">192.168.1.105</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-400 mb-1">Action</p>
+                            <p class="text-white">Server Created</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-400 mb-1">Server ID</p>
+                            <p class="text-white">srv-12345abcde</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <p class="text-sm text-gray-400 mb-2">Details</p>
+                        <div class="bg-black/40 border border-gray-800 rounded-lg p-4 text-gray-300">
+                            Created new Minecraft server "SkyBlock Adventures" with 2GB RAM, 50% CPU, and 10GB storage.
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <p class="text-sm text-gray-400 mb-2">Raw Log</p>
+                        <div class="bg-black/40 border border-gray-800 rounded-lg p-4 overflow-x-auto">
+                            <pre class="text-gray-300 text-sm">{
+  "timestamp": "2025-04-16T14:32:18.475Z",
+  "level": "info",
+  "user": {
+    "id": "usr-9876xyzabc",
+    "username": "johnsmith",
+    "ip": "192.168.1.105"
+  },
+  "action": "server_created",
+  "server": {
+    "id": "srv-12345abcde",
+    "name": "SkyBlock Adventures",
+    "resources": {
+      "ram": 2048,
+      "cpu": 50,
+      "disk": 10240
+    }
+  },
+  "meta": {
+    "browser": "Chrome 112.0.0",
+    "os": "Windows 11"
+  }
+}</pre>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 flex justify-end">
+                        <button class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-4 py-2 rounded-lg transition-all duration-200 mr-3">
+                            <i class="fas fa-copy mr-2"></i> Copy JSON
+                        </button>
+                        <button class="bg-red-600/80 hover:bg-red-700/80 text-white px-4 py-2 rounded-lg transition-all duration-200">
+                            <i class="fas fa-trash-alt mr-2"></i> Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let currentPage = 1;
+        let currentLevel = 'info';
+        let currentSort = 'newest';
+        let currentSearch = '';
+        const logsPerPage = 8;
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchLogs();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            // Search input
+            document.querySelector('input[type="text"]').addEventListener('input', debounce((e) => {
+                currentSearch = e.target.value;
+                currentPage = 1;
+                fetchLogs();
+            }, 300));
+
+            // Level filters
+            document.querySelectorAll('.filter-active, .bg-gray-800\\/80').forEach(button => {
+                button.addEventListener('click', function() {
+                    document.querySelector('.filter-active')?.classList.remove('filter-active');
+                    this.classList.add('filter-active');
+                    currentLevel = this.textContent.trim().toLowerCase();
+                    currentPage = 1;
+                    fetchLogs();
+                });
+            });
+
+            // Sort dropdown
+            document.querySelector('select').addEventListener('change', (e) => {
+                currentSort = e.target.value;
+                fetchLogs();
+            });
+
+            // Export button
+            document.querySelector('button:has(i.fa-download)').addEventListener('click', exportLogs);
+
+            // Clear button
+            document.querySelector('button:has(i.fa-trash-alt)').addEventListener('click', clearLogs);
+
+            // Pagination buttons
+            document.querySelectorAll('.pagination button').forEach(button => {
+                button.addEventListener('click', function() {
+                    if (this.disabled) return;
+                    
+                    if (this.querySelector('i.fa-chevron-left')) {
+                        currentPage = Math.max(1, currentPage - 1);
+                    } else if (this.querySelector('i.fa-chevron-right')) {
+                        currentPage++;
+                    } else {
+                        currentPage = parseInt(this.textContent);
+                    }
+                    
+                    fetchLogs();
+                });
+            });
+
+            // Log detail modal
+            document.querySelectorAll('button:has(i.fa-expand-alt)').forEach(button => {
+                button.addEventListener('click', function() {
+                    const logId = this.closest('tr').dataset.logId;
+                    showLogDetails(logId);
+                });
+            });
+
+            // Close modal
+            document.getElementById('closeModal').addEventListener('click', () => {
+                document.getElementById('logDetailModal').classList.add('hidden');
+            });
+        }
+
+        async function fetchLogs() {
+            try {
+                const response = await fetch(`/api/logs?page=${currentPage}&limit=${logsPerPage}&level=${currentLevel}&search=${currentSearch}&sort=${currentSort}`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    updateLogsTable(data.logs);
+                    updatePagination(data.total);
+                    updateStats(data.stats);
+                } else {
+                    showNotification(data.error || 'Failed to fetch logs', 'error');
+                }
+            } catch (error) {
+                console.error('Error fetching logs:', error);
+                showNotification('Failed to fetch logs', 'error');
+            }
+        }
+
+        function updateLogsTable(logs) {
+            const tbody = document.querySelector('tbody');
+            tbody.innerHTML = '';
+
+            logs.forEach(log => {
+                const tr = document.createElement('tr');
+                tr.className = `border-b border-gray-800 hover:bg-gray-800/30 log-item transition-all duration-200 log-level-${log.level}`;
+                tr.dataset.logId = log.id;
+
+                tr.innerHTML = `
+                    <td class="py-3 px-4 text-sm text-gray-300">${formatDate(log.timestamp)}</td>
+                    <td class="py-3 px-4">
+                        <span class="px-2 py-1 bg-${getLevelColor(log.level)}-500/10 text-${getLevelColor(log.level)}-400 rounded-md text-xs">
+                            <i class="fas fa-${getLevelIcon(log.level)} mr-1"></i> ${capitalizeFirst(log.level)}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4 text-sm text-gray-300">${log.user}</td>
+                    <td class="py-3 px-4 text-sm text-gray-300">${log.action}</td>
+                    <td class="py-3 px-4 text-sm text-gray-300">${log.details}</td>
+                    <td class="py-3 px-4">
+                        <button class="p-1.5 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 rounded-lg transition-all duration-200">
+                            <i class="fas fa-expand-alt"></i>
+                        </button>
+                    </td>
+                `;
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        function updatePagination(total) {
+            const totalPages = Math.ceil(total / logsPerPage);
+            const paginationContainer = document.querySelector('.pagination');
+            
+            // Update showing text
+            const start = (currentPage - 1) * logsPerPage + 1;
+            const end = Math.min(start + logsPerPage - 1, total);
+            paginationContainer.querySelector('.text-gray-400').innerHTML = 
+                `Showing <span class="text-white">${start}-${end}</span> of <span class="text-white">${total}</span> logs`;
+
+            // Update pagination buttons
+            const buttonsContainer = paginationContainer.querySelector('.flex');
+            buttonsContainer.innerHTML = '';
+
+            // Previous button
+            const prevButton = createPaginationButton('<i class="fas fa-chevron-left"></i>', currentPage === 1);
+            buttonsContainer.appendChild(prevButton);
+
+            // Page numbers
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+                    const button = createPaginationButton(i.toString(), i === currentPage);
+                    buttonsContainer.appendChild(button);
+                } else if (i === currentPage - 3 || i === currentPage + 3) {
+                    const ellipsis = document.createElement('span');
+                    ellipsis.className = 'px-3 py-1.5 text-gray-400';
+                    ellipsis.textContent = '...';
+                    buttonsContainer.appendChild(ellipsis);
+                }
+            }
+
+            // Next button
+            const nextButton = createPaginationButton('<i class="fas fa-chevron-right"></i>', currentPage === totalPages);
+            buttonsContainer.appendChild(nextButton);
+        }
+
+        function createPaginationButton(content, isActive) {
+            const button = document.createElement('button');
+            button.className = `px-3 py-1.5 ${isActive ? 'bg-indigo-600 text-white' : 'bg-gray-800/80 text-gray-400 hover:bg-gray-700/80'} rounded-lg transition-all duration-200`;
+            button.innerHTML = content;
+            button.disabled = isActive;
+            return button;
+        }
+
+        function updateStats(stats) {
+            document.querySelectorAll('.text-xl.font-bold').forEach(span => {
+                const level = span.closest('.bg-gray-900\\/80').querySelector('p').textContent.trim().toLowerCase();
+                span.textContent = stats[level] || 0;
+            });
+        }
+
+        async function exportLogs() {
+            try {
+                const response = await fetch('/api/logs?limit=1000');
+                const data = await response.json();
+
+                if (response.ok) {
+                    const blob = new Blob([JSON.stringify(data.logs, null, 2)], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `logs_${new Date().toISOString().split('T')[0]}.json`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                } else {
+                    showNotification(data.error || 'Failed to export logs', 'error');
+                }
+            } catch (error) {
+                console.error('Error exporting logs:', error);
+                showNotification('Failed to export logs', 'error');
+            }
+        }
+
+        async function clearLogs() {
+            if (!confirm('Are you sure you want to clear all logs? This action cannot be undone.')) {
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/logs', {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    showNotification('Logs cleared successfully', 'success');
+                    fetchLogs();
+                } else {
+                    const data = await response.json();
+                    showNotification(data.error || 'Failed to clear logs', 'error');
+                }
+            } catch (error) {
+                console.error('Error clearing logs:', error);
+                showNotification('Failed to clear logs', 'error');
+            }
+        }
+
+        function showLogDetails(logId) {
+            const modal = document.getElementById('logDetailModal');
+            const log = logs.find(l => l.id === logId);
+
+            if (log) {
+                modal.querySelector('h3').textContent = 'Log Details';
+                modal.querySelector('.text-white:nth-of-type(1)').textContent = formatDate(log.timestamp);
+                modal.querySelector('.text-white:nth-of-type(2)').textContent = capitalizeFirst(log.level);
+                modal.querySelector('.text-white:nth-of-type(3)').textContent = log.user;
+                modal.querySelector('.text-white:nth-of-type(4)').textContent = log.ip || 'N/A';
+                modal.querySelector('.text-white:nth-of-type(5)').textContent = log.action;
+                modal.querySelector('.text-white:nth-of-type(6)').textContent = log.serverId || 'N/A';
+                modal.querySelector('.text-gray-300').textContent = log.details;
+                modal.querySelector('pre').textContent = JSON.stringify(log, null, 2);
+
+                modal.classList.remove('hidden');
+            }
+        }
+
+        // Utility functions
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        }
+
+        function getLevelColor(level) {
+            const colors = {
+                info: 'blue',
+                warning: 'yellow',
+                error: 'red',
+                success: 'green',
+                system: 'purple'
+            };
+            return colors[level] || 'gray';
+        }
+
+        function getLevelIcon(level) {
+            const icons = {
+                info: 'info-circle',
+                warning: 'exclamation-triangle',
+                error: 'times-circle',
+                success: 'check-circle',
+                system: 'cog'
+            };
+            return icons[level] || 'info-circle';
+        }
+
+        function capitalizeFirst(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `fixed bottom-4 right-4 px-6 py-4 rounded-lg text-white flex items-center space-x-3 z-50 animate-fade-in shadow-lg ${
+                type === 'success' ? 'bg-gradient-to-r from-green-600 to-green-700' : 'bg-gradient-to-r from-red-600 to-red-700'
+            }`;
+            
+            const icon = document.createElement('i');
+            icon.className = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
+            
+            const messageEl = document.createElement('span');
+            messageEl.textContent = message;
+            
+            notification.appendChild(icon);
+            notification.appendChild(messageEl);
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateY(10px)';
+                notification.style.transition = 'opacity 0.3s, transform 0.3s';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
